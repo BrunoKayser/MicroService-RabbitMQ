@@ -18,4 +18,13 @@ public class MenuMapper {
         return menu;
     }
 
+    public static MenuDto toDto(Menu menu){
+
+        return new MenuDto(
+            menu.getName(),
+            menu.getPrice(),
+            menu.getRestaurant().getId()
+        );
+    }
+
 }

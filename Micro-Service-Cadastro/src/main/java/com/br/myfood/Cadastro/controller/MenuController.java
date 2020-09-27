@@ -34,7 +34,7 @@ public class MenuController {
             var menu = menuService.insertMenu(menuDto);
 
             return Objects.nonNull(menu) ?
-                ResponseEntity.ok(menu) :
+                ResponseEntity.ok(MenuMapper.toDto(menu)) :
                 ResponseEntity.notFound().build();
 
         } catch (Exception e) {
