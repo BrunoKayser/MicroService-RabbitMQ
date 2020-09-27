@@ -12,4 +12,10 @@ public class ClientMapper {
         return new ModelMapper().map(clientDto, Client.class);
     }
 
+    public static Client toEntity(ClientDto clientDto, Long id){
+        var client = new ModelMapper().map(clientDto, Client.class);
+        client.setId(id);
+        return client;
+    }
+
 }
