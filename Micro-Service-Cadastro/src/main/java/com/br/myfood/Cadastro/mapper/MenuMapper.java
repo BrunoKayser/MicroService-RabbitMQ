@@ -1,6 +1,7 @@
 package com.br.myfood.Cadastro.mapper;
 
 import com.br.myfood.Cadastro.dto.MenuDto;
+import com.br.myfood.Cadastro.dto.MenuOrderDto;
 import com.br.myfood.Cadastro.entity.Menu;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -23,8 +24,13 @@ public class MenuMapper {
         return new MenuDto(
             menu.getName(),
             menu.getPrice(),
-            menu.getRestaurant().getId()
-        );
+            menu.getRestaurant().getId());
     }
 
+    public static MenuOrderDto toOrderDto(Long idMenu, Long idRestaurant){
+
+        return new MenuOrderDto(
+            idMenu,
+            idRestaurant);
+    }
 }

@@ -3,6 +3,7 @@ package com.br.myfood.Cadastro.service;
 import com.br.myfood.Cadastro.dto.MenuDto;
 import com.br.myfood.Cadastro.entity.Menu;
 import com.br.myfood.Cadastro.mapper.MenuMapper;
+import com.br.myfood.Cadastro.message.MenuSendMessage;
 import com.br.myfood.Cadastro.repository.MenuRepository;
 import com.br.myfood.Cadastro.repository.RestaurantRepository;
 import java.util.Optional;
@@ -14,13 +15,15 @@ public class MenuService {
 
 
     private final MenuRepository menuRepository;
-
     private final RestaurantRepository restaurantRepository;
+    private final MenuSendMessage menuSendMessage;
 
     @Autowired
-    public MenuService(MenuRepository menuRepository, RestaurantRepository restaurantRepository) {
+    public MenuService(MenuRepository menuRepository, RestaurantRepository restaurantRepository,
+        MenuSendMessage menuSendMessage) {
         this.restaurantRepository = restaurantRepository;
         this.menuRepository = menuRepository;
+        this.menuSendMessage = menuSendMessage;
     }
 
     public Menu insertMenu(MenuDto menudto) {
@@ -29,7 +32,10 @@ public class MenuService {
         if (restaurant.isPresent()) {
             var menu = MenuMapper.toEntity(menudto);
             menu.setRestaurant(restaurant.get());
-            return  menuRepository.save(menu);
+            var newMenu =  menuRepository.save(menu);
+            menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), restaurant.get().getId()));
+            return newMenu;
+
         } else{
             return null;
         }
