@@ -14,6 +14,6 @@ import lombok.ToString;
 public class MenuOrderDto {
 
     private Long idMenu;
-    private Long idRestaurante;
+    private Long idRestaurant;
 
 }

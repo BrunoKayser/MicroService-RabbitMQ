@@ -1,6 +1,5 @@
 package com.br.myfood.Cadastro.dto;
 
-import javax.persistence.SecondaryTable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,6 @@ import lombok.ToString;
 public class MenuOrderDto {
 
     private Long idMenu;
-    private Long idRestaurante;
+    private Long idRestaurant;
 
 }

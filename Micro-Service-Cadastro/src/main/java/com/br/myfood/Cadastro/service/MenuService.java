@@ -1,6 +1,7 @@
 package com.br.myfood.Cadastro.service;
 
 import com.br.myfood.Cadastro.dto.MenuDto;
+import com.br.myfood.Cadastro.dto.MenuOrderDto;
 import com.br.myfood.Cadastro.entity.Menu;
 import com.br.myfood.Cadastro.mapper.MenuMapper;
 import com.br.myfood.Cadastro.message.MenuSendMessage;
@@ -33,7 +34,7 @@ public class MenuService {
             var menu = MenuMapper.toEntity(menudto);
             menu.setRestaurant(restaurant.get());
             var newMenu =  menuRepository.save(menu);
-            menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), restaurant.get().getId()));
+            menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), newMenu.getRestaurant().getId()));
             return newMenu;
 
         } else{
