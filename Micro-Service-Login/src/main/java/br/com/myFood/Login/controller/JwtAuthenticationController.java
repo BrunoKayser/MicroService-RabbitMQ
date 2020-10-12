@@ -1,9 +1,10 @@
 package br.com.myFood.Login.controller;
 
-import br.com.myfood.login.jwt.dto.JwtRequest;
-import br.com.myfood.login.jwt.dto.JwtResponse;
-import br.com.myfood.login.jwt.JwtTokenUtil;
-import br.com.myfood.login.jwt.JwtUserDetailsService;
+
+import br.com.myFood.Login.jwt.JwtTokenUtil;
+import br.com.myFood.Login.jwt.JwtUserDetailsService;
+import br.com.myFood.Login.jwt.dto.JwtRequest;
+import br.com.myFood.Login.jwt.dto.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +24,8 @@ public class JwtAuthenticationController {
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService) {
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
+        JwtUserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
@@ -31,8 +33,6 @@ public class JwtAuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
-        System.out.println("Veio aqui");
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService

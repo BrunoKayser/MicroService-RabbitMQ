@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
@@ -15,8 +16,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String name = authentication.getName();
         // You can get the password here
         String password = authentication.getCredentials().toString();
-
-        System.out.println("XXX Authenticate: " + authentication);
 
         // Your custom authentication logic here
         if (name.equals("admin") && password.equals("pwd")) {
