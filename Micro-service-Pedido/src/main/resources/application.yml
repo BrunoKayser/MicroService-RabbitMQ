@@ -1,27 +1,33 @@
-#Servidor Web
 server:
-  port: 8095
-#server.servlet.context-path=/pedido
+  port: 8091
+  servlet:
+    context-path: /pedido
 
-#jwt
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
 jwt:
   secret: usersecret
 
-#Eurika server
-#spring.application.name=cadastro
-#eureka.instance.hostname=localhost
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
 
-#Endere�o do service registry
-#eureka.client.service-url.defaultZone=http://localhost:8761/eureka
-
-#JDBC
 spring:
+  application:
+    name: pedido
   datasource:
     password: 123456
     url: jdbc:mysql://localhost:3306/pedido?useSSL=false
     username: root
-
-#JPA
   jpa:
     hibernate:
       ddl-auto: update
@@ -30,20 +36,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  rabbitmq:
+    host: localhost
+    password: admin
+    port: 5672
+    username: admin
 
-# logging
-#logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
-#logging.level.org.hibernate.SQL=debug
-
-#Rabbit MQ
-#spring.rabbitmq.host=localhost
-#spring.rabbitmq.port=5672
-#spring.rabbitmq.username=admin
-#spring.rabbitmq.password=admin
-
-#cadastro.rabbitmq.exchange=cadastro.exchange
-#cadastro.client.rabbitmq.routingkey=cadastro.client.routingkey
-#cadastro.menu.rabbitmq.routingkey=cadastro.menu.routingkey
-
-
-
+cadastro:
+  rabbitmq:
+    exchange: cadastro.exchange
+  client:
+    rabbitmq:
+      queue: cadastro.client.rabbitmq.queue
+  menu:
+    rabbitmq:
+      queue: cadastro.menu.rabbitmq.queue
