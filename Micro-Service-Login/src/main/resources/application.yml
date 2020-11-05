@@ -1,0 +1,46 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+jwt:
+  secret: usersecret
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n'
+server:
+  port: 8092
+  servlet:
+    context-path: /authentication
+spring:
+  application:
+    name: authentication
+  datasource:
+    password: 123456
+    url: jdbc:mysql://localhost:3306/login?useSSL=false
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  rabbitmq:
+    host: localhost
+    password: admin
+    port: 5672
+    username: admin
+
+cadastro:
+  login:
+    rabbitmq:
+      queue: cadastro.login.rabbitmq.queue
+  rabbitmq:
+    exchange: cadastro.exchange
