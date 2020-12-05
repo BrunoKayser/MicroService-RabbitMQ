@@ -1,13 +1,14 @@
-package com.br.brunokayser.myfood.cadastro.message;
+package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
-import br.com.brunokayser.myfood.cadastro.dto.LoginDto;
+import com.br.brunokayser.myfood.cadastro.domain.LoginDto;
+import com.br.brunokayser.myfood.cadastro.port.LoginSendMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class LoginSendMessage {
+@Repository
+public class LoginSendMessageImpl implements LoginSendMessage {
 
 
     @Value("${cadastro.rabbitmq.exchange}")
@@ -19,11 +20,11 @@ public class LoginSendMessage {
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public LoginSendMessage(RabbitTemplate rabbitTemplate) {
+    public LoginSendMessageImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendMessage(LoginDto loginDto ) {
+    public void sendMessage(LoginDto loginDto) {
         System.out.println(loginDto);
         System.out.println(exchange);
         System.out.println(rountingKey);

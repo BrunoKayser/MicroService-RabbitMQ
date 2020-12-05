@@ -1,4 +1,4 @@
-package br.com.brunokayser.myfood.cadastro.dto;
+package com.br.brunokayser.myfood.cadastro.domain;
 
 import lombok.*;
 

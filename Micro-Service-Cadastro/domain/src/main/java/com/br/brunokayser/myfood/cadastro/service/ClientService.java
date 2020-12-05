@@ -1,23 +1,21 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
-import br.com.brunokayser.myfood.cadastro.dto.ClientOrderDto;
-import br.com.brunokayser.myfood.cadastro.dto.LoginDto;
-import com.br.brunokayser.myfood.cadastro.message.LoginSendMessage;
-import com.br.brunokayser.myfood.cadastro.entity.Client;
-import com.br.brunokayser.myfood.cadastro.message.ClientSendMessage;
-import com.br.brunokayser.myfood.cadastro.repository.ClientRepository;
+import com.br.brunokayser.myfood.cadastro.domain.Client;
+import com.br.brunokayser.myfood.cadastro.domain.ClientOrderDto;
+import com.br.brunokayser.myfood.cadastro.domain.LoginDto;
+import com.br.brunokayser.myfood.cadastro.port.ClientRepository;
+import com.br.brunokayser.myfood.cadastro.port.ClientSendMessage;
+import com.br.brunokayser.myfood.cadastro.port.LoginSendMessage;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientSendMessage clientSendMessage;
     private final LoginSendMessage loginSendMessage;
-
 
     public Client insertClient(Client client) {
         final var newClient = clientRepository.save(client);

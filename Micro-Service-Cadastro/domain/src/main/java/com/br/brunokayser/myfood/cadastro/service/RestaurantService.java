@@ -1,13 +1,14 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
-import com.br.brunokayser.myfood.cadastro.entity.Restaurant;
-import com.br.brunokayser.myfood.cadastro.repository.RestaurantRepository;
+import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import com.br.brunokayser.myfood.cadastro.port.RestaurantRepository;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
-@AllArgsConstructor
+//@Service
+@RequiredArgsConstructor
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;

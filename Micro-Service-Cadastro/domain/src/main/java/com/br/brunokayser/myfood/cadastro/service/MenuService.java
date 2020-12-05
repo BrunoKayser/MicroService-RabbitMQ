@@ -1,34 +1,37 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
-import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
-import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
-import com.br.brunokayser.myfood.cadastro.entity.Menu;
-import com.br.brunokayser.myfood.cadastro.message.MenuSendMessage;
-import com.br.brunokayser.myfood.cadastro.repository.MenuRepository;
-import com.br.brunokayser.myfood.cadastro.repository.RestaurantRepository;
-import java.util.Optional;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+//import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
+//import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
 
-@Service
-@AllArgsConstructor
+import com.br.brunokayser.myfood.cadastro.domain.Menu;
+import com.br.brunokayser.myfood.cadastro.domain.MenuInsert;
+import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import com.br.brunokayser.myfood.cadastro.mapper.MenuMapper;
+import com.br.brunokayser.myfood.cadastro.port.MenuRepository;
+import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
+import com.br.brunokayser.myfood.cadastro.port.RestaurantRepository;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+
+//@Service
+@RequiredArgsConstructor
 public class MenuService {
 
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
     private final MenuSendMessage menuSendMessage;
 
-    public Menu insertMenu(MenuDto menudto) {
-        var restaurant = restaurantRepository.findById(menudto.getRestaurant());
+    public Menu insertMenu(MenuInsert menuInsert) {
+        var restaurant = restaurantRepository.findById(menuInsert.getRestaurant());
 
         if (restaurant.isPresent()) {
-            var menu = MenuMapper.toEntity(menudto);
-            menu.setRestaurant(restaurant.get());
-            var newMenu =  menuRepository.save(menu);
+            var menu = menuInsert;
+            menu.setRestaurant(restaurant.get().getId());
+            var newMenu = menuRepository.save(buildMenu(menuInsert, restaurant.get()));
             menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), newMenu.getRestaurant().getId()));
             return newMenu;
 
-        } else{
+        } else {
             return null;
         }
     }
@@ -61,5 +64,17 @@ public class MenuService {
         return menuRepository.findById(id);
 
     }
+
+    private Menu buildMenu(MenuInsert menuInsert, Restaurant restaurant){
+
+        return Menu
+            .builder()
+            .name(menuInsert.getName())
+            .price(menuInsert.getPrice())
+            .restaurant(restaurant)
+            .build();
+
+    }
+
 
 }

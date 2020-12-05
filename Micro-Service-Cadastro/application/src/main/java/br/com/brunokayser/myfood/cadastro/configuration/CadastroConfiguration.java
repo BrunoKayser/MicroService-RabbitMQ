@@ -1,15 +1,14 @@
 package br.com.brunokayser.myfood.cadastro.configuration;
 
-import com.br.brunokayser.myfood.cadastro.message.ClientSendMessage;
-import com.br.brunokayser.myfood.cadastro.message.LoginSendMessage;
-import com.br.brunokayser.myfood.cadastro.message.MenuSendMessage;
-import com.br.brunokayser.myfood.cadastro.repository.ClientRepository;
-import com.br.brunokayser.myfood.cadastro.repository.MenuRepository;
-import com.br.brunokayser.myfood.cadastro.repository.RestaurantRepository;
+
+import com.br.brunokayser.myfood.cadastro.port.ClientRepository;
+import com.br.brunokayser.myfood.cadastro.port.ClientSendMessage;
+import com.br.brunokayser.myfood.cadastro.port.LoginSendMessage;
+import com.br.brunokayser.myfood.cadastro.port.MenuRepository;
+import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
+import com.br.brunokayser.myfood.cadastro.port.RestaurantRepository;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import com.br.brunokayser.myfood.cadastro.service.MenuService;
-
-
 import com.br.brunokayser.myfood.cadastro.service.RestaurantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

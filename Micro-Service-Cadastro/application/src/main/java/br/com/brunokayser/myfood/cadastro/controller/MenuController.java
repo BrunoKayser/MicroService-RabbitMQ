@@ -1,8 +1,8 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
-import com.br.myfood.Cadastro.dto.MenuDto;
-import com.br.myfood.Cadastro.service.MenuService;
+import com.br.brunokayser.myfood.cadastro.service.MenuService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/menu")
 public class MenuController {
 
+    @Autowired
     private final MenuService menuService;
 
     @Autowired
@@ -27,11 +28,10 @@ public class MenuController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity insertMenu(@RequestBody MenuDto menuDto) {
+    public ResponseEntity insertMenu(@RequestBody MenuInsertDto menuInsertDto) {
 
         try {
-
-            var menu = menuService.insertMenu(menuDto);
+            var menu = menuService.insertMenu(MenuMapper.toDomain(menuInsertDto));
 
             return Objects.nonNull(menu) ?
                 ResponseEntity.ok(MenuMapper.toDto(menu)) :
@@ -43,9 +43,9 @@ public class MenuController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateMenu(@PathVariable("id") Long id, @RequestBody MenuDto menuDto) {
+    public ResponseEntity updateMenu(@PathVariable("id") Long id, @RequestBody MenuInsertDto menuInsertDto) {
 
-        var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuDto, id));
+        var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuInsertDto, id));
 
         return Objects.nonNull(updateMenu) ? ResponseEntity.ok(updateMenu) : ResponseEntity.notFound().build();
 

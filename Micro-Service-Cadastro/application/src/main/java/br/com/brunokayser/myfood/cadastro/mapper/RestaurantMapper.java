@@ -2,7 +2,7 @@ package br.com.brunokayser.myfood.cadastro.mapper;
 
 
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
-import com.br.brunokayser.myfood.cadastro.entity.Restaurant;
+import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

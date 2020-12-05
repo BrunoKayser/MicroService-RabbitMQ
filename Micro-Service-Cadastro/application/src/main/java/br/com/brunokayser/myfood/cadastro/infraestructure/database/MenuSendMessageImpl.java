@@ -1,14 +1,17 @@
-package com.br.brunokayser.myfood.cadastro.message;
+package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
 
-import br.com.brunokayser.myfood.cadastro.dto.MenuOrderDto;
+//import br.com.brunokayser.myfood.cadastro.dto.MenuOrderDto;
+import com.br.brunokayser.myfood.cadastro.domain.MenuOrder;
+import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class MenuSendMessage {
+@Repository
+public class MenuSendMessageImpl implements MenuSendMessage {
 
     @Value("${cadastro.rabbitmq.exchange}")
     private String exchange;
@@ -19,11 +22,11 @@ public class MenuSendMessage {
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public MenuSendMessage(RabbitTemplate rabbitTemplate) {
+    public MenuSendMessageImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendMessage(MenuOrderDto menuOrderDto) {
+    public void sendMessage(MenuOrder menuOrderDto) {
         System.out.println(menuOrderDto);
         System.out.println(exchange);
         System.out.println(rountingKey);

@@ -1,8 +1,8 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
-import com.br.myfood.Cadastro.dto.RestaurantDto;
+import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
 import br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper;
-import com.br.myfood.Cadastro.service.RestaurantService;
+import com.br.brunokayser.myfood.cadastro.service.RestaurantService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
