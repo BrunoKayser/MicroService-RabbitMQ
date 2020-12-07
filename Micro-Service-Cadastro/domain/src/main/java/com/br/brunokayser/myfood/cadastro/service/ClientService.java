@@ -23,7 +23,7 @@ public class ClientService {
 
     public Client insertClient(Client client) {
 
-        //TODO: Falta implementar messages a partir do message source
+        //TODO: Falta implementar messages a partir do message sourcee
 
         verifyIfExistsByEmail(client.getEmail());
 
