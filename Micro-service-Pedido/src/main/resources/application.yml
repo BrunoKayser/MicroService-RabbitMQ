@@ -1,17 +1,17 @@
 server:
   port: 8091
-  servlet:
-    context-path: /pedido
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    hostname: localhost
-
-jwt:
-  secret: usersecret
+#  servlet:
+#    context-path: /pedido
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#  instance:
+#    hostname: localhost
+#
+#jwt:
+#  secret: usersecret
 
 logging:
   level:

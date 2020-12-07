@@ -25,7 +25,7 @@ public class ClientReceiveMessage {
 
         clientOrderRepository.save(ClientOrderMapper.toEntity(clientOrderDto));
 
-        log.info("SUCCESFULL SAVE {}", clientOrderDto);
+        log.info("[PEDIDO] - SUCCESFULL SAVE {}", clientOrderDto);
 
     }
 }
