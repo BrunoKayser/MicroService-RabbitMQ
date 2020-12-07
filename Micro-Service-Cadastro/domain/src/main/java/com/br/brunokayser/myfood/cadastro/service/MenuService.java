@@ -7,27 +7,27 @@ import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuInsert;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
 import com.br.brunokayser.myfood.cadastro.mapper.MenuMapper;
-import com.br.brunokayser.myfood.cadastro.port.MenuRepository;
+import com.br.brunokayser.myfood.cadastro.port.MenuRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
-import com.br.brunokayser.myfood.cadastro.port.RestaurantRepository;
+import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
-//@Service
+
 @RequiredArgsConstructor
 public class MenuService {
 
-    private final MenuRepository menuRepository;
-    private final RestaurantRepository restaurantRepository;
+    private final MenuRepositoryPort menuRepositoryPort;
+    private final RestaurantRepositoryPort restaurantRepositoryPort;
     private final MenuSendMessage menuSendMessage;
 
     public Menu insertMenu(MenuInsert menuInsert) {
-        var restaurant = restaurantRepository.findById(menuInsert.getRestaurant());
+        var restaurant = restaurantRepositoryPort.findById(menuInsert.getRestaurant());
 
         if (restaurant.isPresent()) {
             var menu = menuInsert;
             menu.setRestaurant(restaurant.get().getId());
-            var newMenu = menuRepository.save(buildMenu(menuInsert, restaurant.get()));
+            var newMenu = menuRepositoryPort.save(buildMenu(menuInsert, restaurant.get()));
             menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), newMenu.getRestaurant().getId()));
             return newMenu;
 
@@ -38,10 +38,10 @@ public class MenuService {
 
     public Menu updateMenu(Menu menu) {
 
-        var newMenu = menuRepository.findById(menu.getId());
+        var newMenu = menuRepositoryPort.findById(menu.getId());
 
         if (newMenu.isPresent()) {
-            return menuRepository.save(menu);
+            return menuRepositoryPort.save(menu);
         } else {
             return null;
         }
@@ -49,10 +49,10 @@ public class MenuService {
 
     public boolean deleteMenu(Long id) {
 
-        var deleteMenu = menuRepository.findById(id);
+        var deleteMenu = menuRepositoryPort.findById(id);
 
         if (deleteMenu.isPresent()) {
-            menuRepository.delete(deleteMenu.get());
+            menuRepositoryPort.delete(deleteMenu.get());
             return true;
         } else {
             return false;
@@ -61,7 +61,7 @@ public class MenuService {
 
     public Optional<Menu> findById(Long id) {
 
-        return menuRepository.findById(id);
+        return menuRepositoryPort.findById(id);
 
     }
 
@@ -73,8 +73,5 @@ public class MenuService {
             .price(menuInsert.getPrice())
             .restaurant(restaurant)
             .build();
-
     }
-
-
 }

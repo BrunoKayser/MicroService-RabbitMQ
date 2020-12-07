@@ -1,5 +1,6 @@
 package br.com.brunokayser.myfood.cadastro.mapper;
 
+import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuOrderDto;
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
@@ -16,7 +17,7 @@ public class MenuMapper {
         return menu;
     }
 
-    public static MenuInsertDto toDto(Menu menu){
+    public static MenuInsertDto toDtoWithoutId(Menu menu){
 
         return new MenuInsertDto(
             menu.getName(),
@@ -27,6 +28,14 @@ public class MenuMapper {
     public static MenuInsert toDomain(MenuInsertDto menuInsertDto){
         return new ModelMapper().map(menuInsertDto, MenuInsert.class);
 
+    }
+
+    public static Menu toDomain(MenuDto menuDto){
+        return new ModelMapper().map(menuDto, Menu.class);
+    }
+
+    public static MenuDto toDto(Menu menu){
+        return new ModelMapper().map(menu, MenuDto.class);
     }
 
     public static MenuOrderDto toOrderDto(Long idMenu, Long idRestaurant){

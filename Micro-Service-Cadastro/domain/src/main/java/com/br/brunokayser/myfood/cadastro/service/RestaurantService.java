@@ -1,28 +1,26 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
-import com.br.brunokayser.myfood.cadastro.port.RestaurantRepository;
+import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-//@Service
+
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    private final RestaurantRepository restaurantRepository;
+    private final RestaurantRepositoryPort restaurantRepositoryPort;
 
-    public Restaurant insertRestaurant(Restaurant client) {
-        return restaurantRepository.save(client);
+    public Restaurant insertRestaurant(Restaurant restaurant) {
+        return restaurantRepositoryPort.save(restaurant);
     }
 
     public Restaurant updateRestaurant(Restaurant restaurant) {
 
-        var newRestaurant = restaurantRepository.findById(restaurant.getId());
+        var newRestaurant = restaurantRepositoryPort.findById(restaurant.getId());
 
         if (newRestaurant.isPresent()) {
-            return restaurantRepository.save(restaurant);
+            return restaurantRepositoryPort.save(restaurant);
         } else {
             return null;
         }
@@ -30,10 +28,10 @@ public class RestaurantService {
 
     public boolean deleteRestaurant(Long id) {
 
-        var deleteRestaurant = restaurantRepository.findById(id);
+        var deleteRestaurant = restaurantRepositoryPort.findById(id);
 
         if (deleteRestaurant.isPresent()) {
-            restaurantRepository.delete(deleteRestaurant.get());
+            restaurantRepositoryPort.delete(deleteRestaurant.get());
             return true;
         } else {
             return false;
@@ -42,8 +40,7 @@ public class RestaurantService {
 
     public Optional<Restaurant> findById(Long id) {
 
-        return restaurantRepository.findById(id);
+        return restaurantRepositoryPort.findById(id);
 
     }
-
 }

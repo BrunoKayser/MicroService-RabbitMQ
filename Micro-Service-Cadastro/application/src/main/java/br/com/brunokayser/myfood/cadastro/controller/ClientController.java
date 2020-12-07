@@ -1,11 +1,17 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDomain;
+import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDto;
+
 import br.com.brunokayser.myfood.cadastro.mapper.ClientMapper;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
 import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,20 +33,18 @@ public class ClientController {
 
     @PostMapping("/insert")
     public @ResponseBody
-    ResponseEntity insertClient(@RequestBody ClientDto clientDto) {
+    ResponseEntity<ClientDto> insertClient(@RequestBody @Valid ClientDto clientDto) {
 
-        try {
-            return ResponseEntity.ok(clientService.insertClient(ClientMapper.toEntity(clientDto)));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        var insertClient = clientService.insertClient(toDomain(clientDto));
+
+        return new ResponseEntity<>(toDto(insertClient), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public @ResponseBody
     ResponseEntity updateClient(@PathVariable("id") Long id, @RequestBody ClientDto clientDto) {
 
-        var updateClient = clientService.updateClient(ClientMapper.toEntity(clientDto, id));
+        var updateClient = clientService.updateClient(toDomain(clientDto, id));
 
         return Objects.nonNull(updateClient) ? ResponseEntity.ok(updateClient) : ResponseEntity.notFound().build();
 
@@ -59,11 +63,10 @@ public class ClientController {
     public @ResponseBody
     ResponseEntity findById(@PathVariable("id") Long id) {
 
-        var client = clientService.findById(id);
+        var client = Optional.of(clientService.findById(id));
 
         return client.isPresent() ?
             ResponseEntity.ok(client.get()) :
             ResponseEntity.notFound().build();
     }
-
 }

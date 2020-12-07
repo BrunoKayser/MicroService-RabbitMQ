@@ -1,5 +1,8 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import static br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDomain;
+import static br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDto;
+
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
 import br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper;
 import com.br.brunokayser.myfood.cadastro.service.RestaurantService;
@@ -27,19 +30,19 @@ public class RestaurantController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity insertRestaurant(@RequestBody RestaurantDto clientDto) {
+    public ResponseEntity insertRestaurant(@RequestBody RestaurantDto restaurantDto) {
 
         try {
-            return ResponseEntity.ok(restaurantService.insertRestaurant(RestaurantMapper.toEntity(clientDto)));
+            return ResponseEntity.ok(toDto(restaurantService.insertRestaurant(toDomain(restaurantDto))));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateRestaurant(@PathVariable("id") Long id, @RequestBody RestaurantDto clientDto) {
+    public ResponseEntity updateRestaurant(@PathVariable("id") Long id, @RequestBody RestaurantDto restaurantDto) {
 
-        var updateRestaurant = restaurantService.updateRestaurant(RestaurantMapper.toEntity(clientDto, id));
+        var updateRestaurant = restaurantService.updateRestaurant(RestaurantMapper.toEntity(restaurantDto, id));
 
         return Objects.nonNull(updateRestaurant) ? ResponseEntity.ok(updateRestaurant) : ResponseEntity.notFound().build();
 

@@ -9,17 +9,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestaurantMapper {
 
-    public static Restaurant toEntity(RestaurantDto restaurantDto){
-
+    public static Restaurant toDomain(RestaurantDto restaurantDto){
         return new ModelMapper().map(restaurantDto, Restaurant.class);
     }
 
-    public static Restaurant toEntity(RestaurantDto restaurantDto,Long id){
+    public static RestaurantDto toDto(Restaurant restaurant){
+        return new ModelMapper().map(restaurant, RestaurantDto.class);
+    }
 
+    public static Restaurant toEntity(RestaurantDto restaurantDto,Long id){
         var restaurant = new ModelMapper().map(restaurantDto, Restaurant.class);
         restaurant.setId(id);
         return restaurant;
-
     }
+
+
 
 }

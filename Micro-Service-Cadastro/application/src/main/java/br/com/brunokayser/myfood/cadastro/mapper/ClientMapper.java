@@ -9,14 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientMapper {
 
-    public static Client toEntity(ClientDto clientDto){
+    public static Client toDomain(ClientDto clientDto){
         return new ModelMapper().map(clientDto, Client.class);
     }
 
-    public static Client toEntity(ClientDto clientDto, Long id){
+    public static Client toDomain(ClientDto clientDto, Long id){
         var client = new ModelMapper().map(clientDto, Client.class);
         client.setId(id);
         return client;
+    }
+
+    public static ClientDto toDto(Client client){
+        return new ModelMapper().map(client, ClientDto.class);
     }
 
 }

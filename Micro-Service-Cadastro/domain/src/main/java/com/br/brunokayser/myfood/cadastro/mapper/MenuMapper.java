@@ -12,5 +12,4 @@ public class MenuMapper {
             .idRestaurant(idRestaurant)
             .build();
     }
-
 }
