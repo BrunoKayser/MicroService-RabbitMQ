@@ -3,6 +3,7 @@ package br.com.brunokayser.myfood.cadastro.mapper;
 
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
 import com.br.brunokayser.myfood.cadastro.domain.Client;
+import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,11 @@ import org.springframework.stereotype.Component;
 public class ClientMapper {
 
     public static Client toDomain(ClientDto clientDto){
+
+        if(Optional.ofNullable(clientDto).isEmpty()){
+            return null;
+        }
+
         return new ModelMapper().map(clientDto, Client.class);
     }
 

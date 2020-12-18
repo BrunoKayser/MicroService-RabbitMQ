@@ -1,9 +1,12 @@
 package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
+import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
 import br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence.ClientRepository;
 import br.com.brunokayser.myfood.cadastro.mapper.ClientMapper;
 import com.br.brunokayser.myfood.cadastro.domain.Client;
+import com.br.brunokayser.myfood.cadastro.exception.NotFoundException;
 import com.br.brunokayser.myfood.cadastro.port.ClientRepositoryPort;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,8 +22,10 @@ class ClientRepositoryPortImpl implements ClientRepositoryPort {
     }
 
     @Override
-    public Client findById(Long id) {
-        return ClientMapper.toDomain(clientRepository.findById(id).get());
+    public Optional<Client> findById(Long id) {
+        var client = ClientMapper.toDomain(clientRepository.findById(id).orElse(null));
+
+        return Optional.ofNullable(client);
     }
 
     @Override

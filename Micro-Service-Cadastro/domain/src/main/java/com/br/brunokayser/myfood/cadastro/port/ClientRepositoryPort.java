@@ -1,12 +1,13 @@
 package com.br.brunokayser.myfood.cadastro.port;
 
 import com.br.brunokayser.myfood.cadastro.domain.Client;
+import java.util.Optional;
 
 public interface ClientRepositoryPort {
 
     Client save(Client client);
 
-    Client findById(Long id);
+    Optional<Client> findById(Long id);
 
     void delete(Client client);
 

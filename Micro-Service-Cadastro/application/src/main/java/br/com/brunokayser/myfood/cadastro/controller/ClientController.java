@@ -6,6 +6,7 @@ import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDto;
 import br.com.brunokayser.myfood.cadastro.mapper.ClientMapper;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
+import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -42,31 +43,29 @@ public class ClientController {
 
     @PutMapping("/update/{id}")
     public @ResponseBody
-    ResponseEntity updateClient(@PathVariable("id") Long id, @RequestBody ClientDto clientDto) {
+    ResponseEntity<ClientDto> updateClient(@PathVariable("id") Long id, @RequestBody ClientDto clientDto) {
 
-        var updateClient = clientService.updateClient(toDomain(clientDto, id));
+        var updatedClient = clientService.updateClient(toDomain(clientDto, id));
 
-        return Objects.nonNull(updateClient) ? ResponseEntity.ok(updateClient) : ResponseEntity.notFound().build();
+        return new ResponseEntity<>(toDto(updatedClient), HttpStatus.OK);
 
     }
 
     @DeleteMapping("/delete/{id}")
     public @ResponseBody
-    ResponseEntity deleteClient(@PathVariable("id") Long id) {
+    ResponseEntity<Void> deleteClient(@PathVariable("id") Long id) {
 
-        return clientService.deleteClient(id) ?
-            ResponseEntity.ok().build() :
-            ResponseEntity.notFound().build();
+        clientService.deleteClient(id);
+
+       return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
     public @ResponseBody
-    ResponseEntity findById(@PathVariable("id") Long id) {
+    ResponseEntity<ClientDto> findById(@PathVariable("id") Long id) {
 
-        var client = Optional.of(clientService.findById(id));
+        var client = clientService.findById(id);
 
-        return client.isPresent() ?
-            ResponseEntity.ok(client.get()) :
-            ResponseEntity.notFound().build();
+        return new ResponseEntity<>(toDto(client), HttpStatus.FOUND);
     }
 }
