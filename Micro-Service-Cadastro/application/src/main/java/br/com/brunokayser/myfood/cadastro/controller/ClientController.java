@@ -4,6 +4,7 @@ import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDomain;
 import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDto;
 
 import br.com.brunokayser.myfood.cadastro.mapper.ClientMapper;
+import br.com.brunokayser.myfood.cadastro.validator.DefaultRequestValidator;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
 import java.net.URI;
@@ -32,9 +33,14 @@ public class ClientController {
     @Autowired
     private final ClientService clientService;
 
+    @Autowired
+    private final DefaultRequestValidator defaultRequestValidator;
+
     @PostMapping("/insert")
     public @ResponseBody
     ResponseEntity<ClientDto> insertClient(@RequestBody @Valid ClientDto clientDto) {
+
+        defaultRequestValidator.validate(clientDto);
 
         var insertClient = clientService.insertClient(toDomain(clientDto));
 
@@ -44,6 +50,8 @@ public class ClientController {
     @PutMapping("/update/{id}")
     public @ResponseBody
     ResponseEntity<ClientDto> updateClient(@PathVariable("id") Long id, @RequestBody ClientDto clientDto) {
+
+        defaultRequestValidator.validate(clientDto);
 
         var updatedClient = clientService.updateClient(toDomain(clientDto, id));
 
