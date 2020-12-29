@@ -10,6 +10,7 @@ import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import com.br.brunokayser.myfood.cadastro.service.MenuService;
 import com.br.brunokayser.myfood.cadastro.service.RestaurantService;
+import com.br.brunokayser.myfood.cadastro.validator.ServiceValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -40,18 +41,18 @@ public class CadastroConfiguration {
     @Bean
     public ClientService clientService(ClientRepositoryPort clientRepositoryPort, ClientSendMessage clientSendMessage,
         LoginSendMessage loginSendMessage) {
-        return new ClientService(clientRepositoryPort, clientSendMessage, loginSendMessage);
+        return new ClientService(clientRepositoryPort, clientSendMessage, loginSendMessage, ServiceValidator.builder().build());
     }
 
     @Bean
     public MenuService menuService(MenuRepositoryPort menuRepository, RestaurantRepositoryPort restaurantRepository,
         MenuSendMessage menuSendMessage) {
-        return new MenuService(menuRepository, restaurantRepository, menuSendMessage);
+        return new MenuService(menuRepository, restaurantRepository, menuSendMessage, ServiceValidator.builder().build());
     }
 
     @Bean
     public RestaurantService restaurantService(RestaurantRepositoryPort restaurantRepository){
-        return new RestaurantService(restaurantRepository);
+        return new RestaurantService(restaurantRepository, ServiceValidator.builder().build());
     }
 
 }

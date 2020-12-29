@@ -1,6 +1,5 @@
 package br.com.brunokayser.myfood.cadastro.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,10 +24,10 @@ public class ClientDto {
     @NotNull(message = "name.required")
     private String name;
 
-    @NotNull
+    @NotNull(message = "email.required")
     private String email;
 
-    @NotNull
+    @NotNull(message = "password.required")
     private String password;
 
 }

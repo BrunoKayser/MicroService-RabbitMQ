@@ -44,14 +44,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler({MethodArgumentNotValidException.class})
-//    @Qualifier("MessagesRequestBeanValidation")
-//    public ResponseEntity<CustomErrorDto> customHandlerValidation(Exception ex, WebRequest request){
-//        var error = getCustomError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
-//        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//    }
-
-
     private CustomErrorDto getCustomError(String messageError, int statusCode, Object... objects){
 
         return CustomErrorDto
@@ -75,8 +67,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
         HttpStatus status, WebRequest request) {
-
-        String correlationId = UUID.randomUUID().toString();
 
         CustomErrorDto errors = CustomErrorDto
             .builder()

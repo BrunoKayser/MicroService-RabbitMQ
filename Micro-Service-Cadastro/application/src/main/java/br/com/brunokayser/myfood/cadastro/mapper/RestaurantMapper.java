@@ -3,6 +3,7 @@ package br.com.brunokayser.myfood.cadastro.mapper;
 
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Component;
 public class RestaurantMapper {
 
     public static Restaurant toDomain(RestaurantDto restaurantDto){
-        return new ModelMapper().map(restaurantDto, Restaurant.class);
+
+        return  (Optional.ofNullable(restaurantDto).isEmpty()) ? null : new ModelMapper().map(restaurantDto, Restaurant.class);
     }
 
     public static RestaurantDto toDto(Restaurant restaurant){
@@ -22,7 +24,4 @@ public class RestaurantMapper {
         restaurant.setId(id);
         return restaurant;
     }
-
-
-
 }

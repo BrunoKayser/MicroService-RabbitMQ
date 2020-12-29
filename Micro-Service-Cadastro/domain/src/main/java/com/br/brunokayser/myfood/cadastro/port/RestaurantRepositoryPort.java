@@ -12,4 +12,8 @@ public interface RestaurantRepositoryPort {
 
     void delete(Restaurant restaurant);
 
+    Boolean existsByEmailOrName(String email, String name);
+
+    void update(Restaurant restaurant);
+
 }

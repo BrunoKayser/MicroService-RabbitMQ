@@ -1,10 +1,13 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import static java.util.Objects.nonNull;
+
 import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
 import com.br.brunokayser.myfood.cadastro.service.MenuService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +33,12 @@ public class MenuController {
     @PostMapping("/insert")
     public ResponseEntity insertMenu(@RequestBody MenuInsertDto menuInsertDto) {
 
+        //TODO colocar validação dos dados do insert aqui
+
         try {
             var menu = menuService.insertMenu(MenuMapper.toDomain(menuInsertDto));
 
-            return Objects.nonNull(menu) ?
+            return nonNull(menu) ?
                 ResponseEntity.ok(MenuMapper.toDto(menu)) :
                 ResponseEntity.notFound().build();
 
@@ -47,26 +52,24 @@ public class MenuController {
 
         var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuInsertDto, id));
 
-        return Objects.nonNull(updateMenu) ? ResponseEntity.ok(updateMenu) : ResponseEntity.notFound().build();
+        return nonNull(updateMenu) ? ResponseEntity.ok(updateMenu) : ResponseEntity.notFound().build();
 
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteMenu(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable("id") Long id) {
 
-        return menuService.deleteMenu(id) ?
-            ResponseEntity.ok().build() :
-            ResponseEntity.notFound().build();
+         menuService.deleteMenu(id);
+
+         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity findById(@PathVariable("id") Long id) {
 
-        var client = menuService.findById(id);
+        var menu  = menuService.findById(id);
 
-        return client.isPresent() ?
-            ResponseEntity.ok(client.get()) :
-            ResponseEntity.notFound().build();
+        return nonNull(menu)  ? ResponseEntity.ok(menu) : ResponseEntity.notFound().build();
     }
 
 }

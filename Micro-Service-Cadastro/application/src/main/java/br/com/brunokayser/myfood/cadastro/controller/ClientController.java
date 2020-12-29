@@ -3,13 +3,9 @@ package br.com.brunokayser.myfood.cadastro.controller;
 import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDomain;
 import static br.com.brunokayser.myfood.cadastro.mapper.ClientMapper.toDto;
 
-import br.com.brunokayser.myfood.cadastro.mapper.ClientMapper;
-import br.com.brunokayser.myfood.cadastro.validator.DefaultRequestValidator;
+import br.com.brunokayser.myfood.cadastro.validator.RequestValidator;
 import com.br.brunokayser.myfood.cadastro.service.ClientService;
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
-import java.net.URI;
-import java.util.Objects;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +30,13 @@ public class ClientController {
     private final ClientService clientService;
 
     @Autowired
-    private final DefaultRequestValidator defaultRequestValidator;
+    private final RequestValidator requestValidator;
 
     @PostMapping("/insert")
     public @ResponseBody
     ResponseEntity<ClientDto> insertClient(@RequestBody @Valid ClientDto clientDto) {
 
-        defaultRequestValidator.validate(clientDto);
+        requestValidator.validate(clientDto);
 
         var insertClient = clientService.insertClient(toDomain(clientDto));
 
@@ -51,7 +47,7 @@ public class ClientController {
     public @ResponseBody
     ResponseEntity<ClientDto> updateClient(@PathVariable("id") Long id, @RequestBody ClientDto clientDto) {
 
-        defaultRequestValidator.validate(clientDto);
+        requestValidator.validate(clientDto);
 
         var updatedClient = clientService.updateClient(toDomain(clientDto, id));
 

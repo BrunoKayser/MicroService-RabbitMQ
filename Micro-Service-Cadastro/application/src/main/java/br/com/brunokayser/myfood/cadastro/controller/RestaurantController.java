@@ -5,9 +5,13 @@ import static br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDto;
 
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
 import br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper;
+import br.com.brunokayser.myfood.cadastro.validator.RequestValidator;
 import com.br.brunokayser.myfood.cadastro.service.RestaurantService;
 import java.util.Objects;
+import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,50 +23,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/restaurant")
 public class RestaurantController {
 
+    @Autowired
     private final RestaurantService restaurantService;
 
     @Autowired
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
-    }
+    private final RequestValidator requestValidator;
+
 
     @PostMapping("/insert")
-    public ResponseEntity insertRestaurant(@RequestBody RestaurantDto restaurantDto) {
+    public ResponseEntity<RestaurantDto> insertRestaurant(@RequestBody @Valid RestaurantDto restaurantDto) {
 
-        try {
-            return ResponseEntity.ok(toDto(restaurantService.insertRestaurant(toDomain(restaurantDto))));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        requestValidator.validate(restaurantDto);
+
+        var restaurant = (restaurantService.insertRestaurant(toDomain(restaurantDto)));
+
+        return new ResponseEntity<>(toDto(restaurant), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateRestaurant(@PathVariable("id") Long id, @RequestBody RestaurantDto restaurantDto) {
+    public ResponseEntity<RestaurantDto> updateRestaurant(@PathVariable("id") Long id, @RequestBody RestaurantDto restaurantDto) {
+
+        requestValidator.validate(restaurantDto);
 
         var updateRestaurant = restaurantService.updateRestaurant(RestaurantMapper.toEntity(restaurantDto, id));
 
-        return Objects.nonNull(updateRestaurant) ? ResponseEntity.ok(updateRestaurant) : ResponseEntity.notFound().build();
-
+        return new ResponseEntity<>(toDto(updateRestaurant), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteRestaurant(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable("id") Long id) {
 
-        return restaurantService.deleteRestaurant(id) ?
-            ResponseEntity.ok().build() :
-            ResponseEntity.notFound().build();
+        restaurantService.deleteRestaurant(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity findById(@PathVariable("id") Long id) {
+    public ResponseEntity<RestaurantDto> findById(@PathVariable("id") Long id) {
 
-        var client = restaurantService.findById(id);
+        var restaurant = restaurantService.findById(id);
 
-        return client.isPresent() ?
-            ResponseEntity.ok(client.get()) :
-            ResponseEntity.notFound().build();
+        return new ResponseEntity<>(toDto(restaurant), HttpStatus.OK);
     }
 }

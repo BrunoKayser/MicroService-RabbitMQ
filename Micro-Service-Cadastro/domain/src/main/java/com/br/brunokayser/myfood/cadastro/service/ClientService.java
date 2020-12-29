@@ -1,13 +1,14 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
+import static com.br.brunokayser.myfood.cadastro.domain.Constant.TAG;
+
 import com.br.brunokayser.myfood.cadastro.domain.Client;
 import com.br.brunokayser.myfood.cadastro.domain.ClientOrderDto;
 import com.br.brunokayser.myfood.cadastro.domain.LoginDto;
-import com.br.brunokayser.myfood.cadastro.exception.BadRequestException;
-import com.br.brunokayser.myfood.cadastro.exception.NotFoundException;
 import com.br.brunokayser.myfood.cadastro.port.ClientRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.port.ClientSendMessage;
 import com.br.brunokayser.myfood.cadastro.port.LoginSendMessage;
+import com.br.brunokayser.myfood.cadastro.validator.ServiceValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,12 +19,11 @@ public class ClientService {
     private final ClientRepositoryPort clientRepositoryPort;
     private final ClientSendMessage clientSendMessage;
     private final LoginSendMessage loginSendMessage;
-
-    private static final String TAG = "CADASTRO - ";
+    private final ServiceValidator serviceValidator;
 
     public Client insertClient(Client client) {
 
-        verifyIfExistsByEmail(client.getEmail());
+        serviceValidator.verifyIfExistsByEmail(clientRepositoryPort.existsByEmail(client.getEmail()));
 
         final var newClient = clientRepositoryPort.save(client);
         clientSendMessage.sendMessage(new ClientOrderDto(newClient.getId()));
@@ -35,49 +35,35 @@ public class ClientService {
 
     public Client updateClient(Client client) {
 
-        var newClient = clientRepositoryPort.findById(client.getId());
+        var clientSearched = clientRepositoryPort.findById(client.getId());
 
-        throwsExceptionIfNotFound(newClient.isEmpty());
+        serviceValidator.validateIfFound(clientSearched.isEmpty());
+        serviceValidator.verifyIfExistsByEmail(clientRepositoryPort.existsByEmail(client.getEmail()));
 
-        verifyIfExistsByEmail(client.getEmail());
+        clientRepositoryPort.update(client);
 
-        log.info(TAG + " Successful insert client: {}", newClient);
-        return clientRepositoryPort.save(client);
+        log.info(TAG + " Successful update client: {}", client);
+        return client;
     }
 
     public void deleteClient(Long id) {
 
         var deletedClient = clientRepositoryPort.findById(id);
 
-        var condition = deletedClient.isEmpty();
+        serviceValidator.validateIfFound(deletedClient.isEmpty());
 
-        throwsExceptionIfNotFound(condition);
+        clientRepositoryPort.delete(deletedClient.get());
 
         log.info(TAG + " Successful delete for client: {}", deletedClient);
-        clientRepositoryPort.delete(deletedClient.get());
     }
 
     public Client findById(Long id) {
 
         var client = clientRepositoryPort.findById(id);
 
-        throwsExceptionIfNotFound(client.isEmpty());
+        serviceValidator.validateIfFound(client.isEmpty());
 
         log.info(TAG + "Get Successful client: {}", client.get());
         return client.get();
-    }
-
-    private void verifyIfExistsByEmail(String email) {
-        if (clientRepositoryPort.existsByEmail(email)) {
-            log.error(TAG + " This client already exists");
-            throw new BadRequestException("client.already.exists");
-        }
-    }
-
-    private void throwsExceptionIfNotFound(Boolean condition) {
-        if(condition) {
-            log.error(TAG + "This client doesnt exists");
-            throw new NotFoundException("client.not.found");
-        }
     }
 }

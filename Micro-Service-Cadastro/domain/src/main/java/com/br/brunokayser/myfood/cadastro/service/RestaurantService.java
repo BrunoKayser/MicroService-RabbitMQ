@@ -1,46 +1,64 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
+import static com.br.brunokayser.myfood.cadastro.domain.Constant.TAG;
+import static com.br.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDomainWithoutNullValue;
+
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import com.br.brunokayser.myfood.cadastro.mapper.RestaurantMapper;
 import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
+import com.br.brunokayser.myfood.cadastro.validator.ServiceValidator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RequiredArgsConstructor
 public class RestaurantService {
 
     private final RestaurantRepositoryPort restaurantRepositoryPort;
+    private final ServiceValidator serviceValidator;
 
     public Restaurant insertRestaurant(Restaurant restaurant) {
+
+        serviceValidator.verifyIfExistsNameOrEmail(
+            restaurantRepositoryPort.existsByEmailOrName(restaurant.getEmail(), restaurant.getName()));
+
+        log.info(TAG + " Successful insert restaurant: {}", restaurant);
         return restaurantRepositoryPort.save(restaurant);
     }
 
     public Restaurant updateRestaurant(Restaurant restaurant) {
 
-        var newRestaurant = restaurantRepositoryPort.findById(restaurant.getId());
+        var restaurantSearched = restaurantRepositoryPort.findById(restaurant.getId());
 
-        if (newRestaurant.isPresent()) {
-            return restaurantRepositoryPort.save(restaurant);
-        } else {
-            return null;
-        }
+        serviceValidator.validateIfFound(restaurantSearched.isEmpty());
+        serviceValidator.verifyIfExistsNameOrEmail(
+            restaurantRepositoryPort.existsByEmailOrName(restaurant.getEmail(), restaurant.getName()));
+
+        restaurantRepositoryPort.update(toDomainWithoutNullValue(restaurant, restaurantSearched.get()));
+
+        log.info(TAG + " Successful updated restaurant: {}", restaurant);
+        return restaurant;
     }
 
-    public boolean deleteRestaurant(Long id) {
+    public void deleteRestaurant(Long id) {
 
-        var deleteRestaurant = restaurantRepositoryPort.findById(id);
+        var restaurantToDelete = restaurantRepositoryPort.findById(id);
 
-        if (deleteRestaurant.isPresent()) {
-            restaurantRepositoryPort.delete(deleteRestaurant.get());
-            return true;
-        } else {
-            return false;
-        }
+        serviceValidator.validateIfFound(restaurantToDelete.isEmpty());
+
+        restaurantRepositoryPort.delete(restaurantToDelete.get());
+
+        log.info(TAG + " Successful delete for restaurant: {}", restaurantToDelete.get());
     }
 
-    public Optional<Restaurant> findById(Long id) {
+    public Restaurant findById(Long id) {
 
-        return restaurantRepositoryPort.findById(id);
+        var restaurant = restaurantRepositoryPort.findById(id);
 
+        serviceValidator.validateIfFound(restaurant.isEmpty());
+
+        log.info(TAG + "Get Successful restaurant : {}", restaurant.get());
+        return restaurant.get();
     }
 }

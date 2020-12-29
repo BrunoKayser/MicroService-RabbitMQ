@@ -13,4 +13,6 @@ public interface ClientRepositoryPort {
 
     Boolean existsByEmail(String email);
 
+    void update(Client client);
+
 }
