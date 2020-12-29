@@ -1,11 +1,15 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import static br.com.brunokayser.myfood.cadastro.mapper.MenuMapper.toDto;
 import static java.util.Objects.nonNull;
 
+import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
+import br.com.brunokayser.myfood.cadastro.dto.MenuUpdateDto;
 import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
 import com.br.brunokayser.myfood.cadastro.service.MenuService;
 import java.util.Objects;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,26 +35,19 @@ public class MenuController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity insertMenu(@RequestBody MenuInsertDto menuInsertDto) {
+    public ResponseEntity<MenuDto> insertMenu(@RequestBody @Valid MenuInsertDto menuInsertDto) {
 
-        //TODO colocar validação dos dados do insert aqui
+        //TODO colocar validação dos dados do insert aqui, TAMBEM ajustar o request
 
-        try {
-            var menu = menuService.insertMenu(MenuMapper.toDomain(menuInsertDto));
+        var menu = menuService.insertMenu(MenuMapper.toDomain(menuInsertDto));
 
-            return nonNull(menu) ?
-                ResponseEntity.ok(MenuMapper.toDto(menu)) :
-                ResponseEntity.notFound().build();
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return new ResponseEntity<>(toDto(menu), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateMenu(@PathVariable("id") Long id, @RequestBody MenuInsertDto menuInsertDto) {
+    public ResponseEntity updateMenu(@PathVariable("id") Long id, @RequestBody MenuUpdateDto menuUpdateDto) {
 
-        var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuInsertDto, id));
+        var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuUpdateDto, id));
 
         return nonNull(updateMenu) ? ResponseEntity.ok(updateMenu) : ResponseEntity.notFound().build();
 
@@ -59,17 +56,17 @@ public class MenuController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable("id") Long id) {
 
-         menuService.deleteMenu(id);
+        menuService.deleteMenu(id);
 
-         return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity findById(@PathVariable("id") Long id) {
 
-        var menu  = menuService.findById(id);
+        var menu = menuService.findById(id);
 
-        return nonNull(menu)  ? ResponseEntity.ok(menu) : ResponseEntity.notFound().build();
+        return nonNull(menu) ? ResponseEntity.ok(menu) : ResponseEntity.notFound().build();
     }
 
 }

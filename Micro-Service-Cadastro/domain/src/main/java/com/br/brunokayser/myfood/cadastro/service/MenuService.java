@@ -1,8 +1,12 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
 
+import static com.br.brunokayser.myfood.cadastro.domain.enums.Constant.TAG;
+import static com.br.brunokayser.myfood.cadastro.mapper.MenuMapper.toOrderDto;
+
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuInsert;
+import com.br.brunokayser.myfood.cadastro.domain.MenuUpdate;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
 import com.br.brunokayser.myfood.cadastro.mapper.MenuMapper;
 import com.br.brunokayser.myfood.cadastro.port.MenuRepositoryPort;
@@ -22,37 +26,34 @@ public class MenuService {
 
     private final ServiceValidator serviceValidator;
 
-    private static final String TAG = "CADASTRO - ";
-
     public Menu insertMenu(MenuInsert menuInsert) {
 
-        //TODO validações dos dados do menuInsert serão colocadas na controller
+        //TODO: Colocar validação para ver se o prato ja existe a esse restaurante
 
         var restaurant = restaurantRepositoryPort.findById(menuInsert.getRestaurant());
 
         serviceValidator.validateIfFound(restaurant.isEmpty());
 
-        menuInsert.setRestaurant(restaurant.get().getId());
+        var menuSaved = menuRepositoryPort.save(buildMenu(menuInsert, restaurant.get()));
 
-        var newMenu = menuRepositoryPort.save(buildMenu(menuInsert, restaurant.get()));
+        menuSendMessage.sendMessage(toOrderDto(menuSaved.getId(), menuSaved.getRestaurant().getId()));
 
-        menuSendMessage.sendMessage(MenuMapper.toOrderDto(newMenu.getId(), newMenu.getRestaurant().getId()));
-        log.info(TAG + " Successful save menu: {}", newMenu);
-        return newMenu;
-
+        log.info(TAG + " Successful save menu: {}", menuSaved);
+        return menuSaved;
     }
 
-    public Menu updateMenu(Menu menu) {
+    public Menu updateMenu(MenuUpdate menu) {
 
-        //TODO: Falta ajustar o Update para dar um update e não um save
+        //TODO: Colocar validação para ver se o prato ja existe a esse restaurante, também precisa fazer o método de update no repository
+        // e por último fazer o mapper para não obter valores nulos
 
         var newMenu = menuRepositoryPort.findById(menu.getId());
 
         serviceValidator.validateIfFound(newMenu.isEmpty());
 
         log.info(TAG + " Successful update menu: {}", menu);
-        return menuRepositoryPort.save(menu);
-
+        //menuRepositoryPort.update(menu);
+        return null;
     }
 
     public void deleteMenu(Long id) {

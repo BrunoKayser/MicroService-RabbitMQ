@@ -3,18 +3,25 @@ package br.com.brunokayser.myfood.cadastro.mapper;
 import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuOrderDto;
+import br.com.brunokayser.myfood.cadastro.dto.MenuUpdateDto;
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuInsert;
+import com.br.brunokayser.myfood.cadastro.domain.MenuUpdate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuMapper {
 
-    public static Menu toEntity(MenuInsertDto menuInsertDto, Long id){
-        var menu = new ModelMapper().map(menuInsertDto, Menu.class);
-        menu.setId(id);
-        return menu;
+    public static MenuUpdate toEntity(MenuUpdateDto menuUpdateDto, Long id){
+
+        return MenuUpdate
+            .builder()
+            .id(id)
+            .name(menuUpdateDto.getName())
+            .price(menuUpdateDto.getPrice())
+            .restaurant(menuUpdateDto.getRestaurant())
+            .build();
     }
 
     public static MenuInsertDto toDtoWithoutId(Menu menu){
@@ -27,7 +34,6 @@ public class MenuMapper {
 
     public static MenuInsert toDomain(MenuInsertDto menuInsertDto){
         return new ModelMapper().map(menuInsertDto, MenuInsert.class);
-
     }
 
     public static Menu toDomain(MenuDto menuDto){

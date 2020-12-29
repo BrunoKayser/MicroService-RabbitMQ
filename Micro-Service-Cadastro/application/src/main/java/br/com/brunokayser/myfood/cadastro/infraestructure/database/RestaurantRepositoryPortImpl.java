@@ -2,13 +2,10 @@ package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
 import static br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDomain;
 import static br.com.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDto;
-import static com.br.brunokayser.myfood.cadastro.domain.Constant.TAG;
 import static java.util.Optional.ofNullable;
 
 import br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence.RestaurantRepository;
-import com.br.brunokayser.myfood.cadastro.domain.Constant;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
-import com.br.brunokayser.myfood.cadastro.exception.NotFoundException;
 import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

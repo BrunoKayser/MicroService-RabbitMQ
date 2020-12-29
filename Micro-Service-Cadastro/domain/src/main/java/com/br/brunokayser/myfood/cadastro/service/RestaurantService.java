@@ -1,13 +1,11 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
-import static com.br.brunokayser.myfood.cadastro.domain.Constant.TAG;
+import static com.br.brunokayser.myfood.cadastro.domain.enums.Constant.TAG;
 import static com.br.brunokayser.myfood.cadastro.mapper.RestaurantMapper.toDomainWithoutNullValue;
 
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
-import com.br.brunokayser.myfood.cadastro.mapper.RestaurantMapper;
 import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.validator.ServiceValidator;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

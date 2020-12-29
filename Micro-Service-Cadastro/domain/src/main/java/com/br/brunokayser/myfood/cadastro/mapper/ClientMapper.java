@@ -2,13 +2,13 @@ package com.br.brunokayser.myfood.cadastro.mapper;
 
 import static java.util.Optional.ofNullable;
 
-import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import com.br.brunokayser.myfood.cadastro.domain.Client;
 
-public class RestaurantMapper {
+public class ClientMapper {
 
-    public static Restaurant toDomainWithoutNullValue(Restaurant update, Restaurant found){
+    public static Client toDomainWithoutNullValue(Client update, Client found){
 
-        return Restaurant
+        return Client
             .builder()
             .id(update.getId())
             .email(ofNullable(update.getEmail()).orElse(found.getEmail()))
@@ -16,4 +16,5 @@ public class RestaurantMapper {
             .password(ofNullable(update.getPassword()).orElse(found.getPassword()))
             .build();
     }
+
 }

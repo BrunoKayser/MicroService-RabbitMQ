@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +27,9 @@ public class MenuDto {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long Id;
+
     private String name;
+
     private Double price;
 
     @ManyToOne(fetch = FetchType.LAZY)

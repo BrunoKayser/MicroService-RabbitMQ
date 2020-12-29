@@ -9,10 +9,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuInsert {
+public class MenuUpdate extends MenuInsert {
 
-    private String name;
-    private Double price;
-    private Long restaurant;
+    private Long id;
 
 }

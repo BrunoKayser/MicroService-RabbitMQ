@@ -1,7 +1,9 @@
 package br.com.brunokayser.myfood.cadastro.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -10,15 +12,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuInsertDto {
+public class MenuUpdateDto extends MenuInsertDto {
 
-    @NotNull
-    private String name;
-
-    @NotNull
-    private Double price;
-
-    @NotNull
-    private Long restaurant;
+    @JsonIgnore
+    private Long id;
 
 }
