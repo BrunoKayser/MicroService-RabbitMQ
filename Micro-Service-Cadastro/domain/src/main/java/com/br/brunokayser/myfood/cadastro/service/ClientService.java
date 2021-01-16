@@ -1,7 +1,7 @@
 package com.br.brunokayser.myfood.cadastro.service;
 
 import static com.br.brunokayser.myfood.cadastro.domain.enums.Constant.TAG;
-import static com.br.brunokayser.myfood.cadastro.mapper.ClientMapper.toDomainWithoutNullValue;
+import static com.br.brunokayser.myfood.cadastro.mapper.ClientMapper.buildClientToUpdate;
 
 import com.br.brunokayser.myfood.cadastro.domain.Client;
 import com.br.brunokayser.myfood.cadastro.domain.ClientOrderDto;
@@ -41,8 +41,7 @@ public class ClientService {
         serviceValidator.validateIfFound(clientSearched.isEmpty());
         serviceValidator.verifyIfExistsByEmail(clientRepositoryPort.existsByEmail(client.getEmail()));
 
-
-        clientRepositoryPort.update(toDomainWithoutNullValue(client, clientSearched.get()));
+        clientRepositoryPort.update(buildClientToUpdate(client, clientSearched.get()));
 
         log.info(TAG + " Successful update client: {}", client);
         return client;

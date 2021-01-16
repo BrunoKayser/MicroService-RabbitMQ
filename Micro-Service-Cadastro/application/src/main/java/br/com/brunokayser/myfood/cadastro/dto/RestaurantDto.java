@@ -21,7 +21,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-@DynamicUpdate
 @Entity
 @Table(name = "tb_restaurant")
 public class RestaurantDto {

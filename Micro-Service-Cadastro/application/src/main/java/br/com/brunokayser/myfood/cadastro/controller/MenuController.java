@@ -1,5 +1,6 @@
 package br.com.brunokayser.myfood.cadastro.controller;
 
+import static br.com.brunokayser.myfood.cadastro.mapper.MenuMapper.toDomain;
 import static br.com.brunokayser.myfood.cadastro.mapper.MenuMapper.toDto;
 import static java.util.Objects.nonNull;
 
@@ -7,9 +8,10 @@ import br.com.brunokayser.myfood.cadastro.dto.MenuDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.dto.MenuUpdateDto;
 import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
+import br.com.brunokayser.myfood.cadastro.validator.RequestValidator;
 import com.br.brunokayser.myfood.cadastro.service.MenuService;
-import java.util.Objects;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/menu")
 public class MenuController {
 
@@ -30,27 +33,26 @@ public class MenuController {
     private final MenuService menuService;
 
     @Autowired
-    public MenuController(MenuService menuService) {
-        this.menuService = menuService;
-    }
+    private final RequestValidator requestValidator;
 
     @PostMapping("/insert")
     public ResponseEntity<MenuDto> insertMenu(@RequestBody @Valid MenuInsertDto menuInsertDto) {
 
-        //TODO colocar validação dos dados do insert aqui, TAMBEM ajustar o request
+        requestValidator.validate(menuInsertDto);
 
-        var menu = menuService.insertMenu(MenuMapper.toDomain(menuInsertDto));
+        var menu = menuService.insertMenu(toDomain(menuInsertDto));
 
         return new ResponseEntity<>(toDto(menu), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateMenu(@PathVariable("id") Long id, @RequestBody MenuUpdateDto menuUpdateDto) {
+    public ResponseEntity<MenuDto> updateMenu(@PathVariable("id") Long id, @RequestBody MenuUpdateDto menuUpdateDto) {
 
-        var updateMenu = menuService.updateMenu(MenuMapper.toEntity(menuUpdateDto, id));
+        requestValidator.validate(menuUpdateDto);
 
-        return nonNull(updateMenu) ? ResponseEntity.ok(updateMenu) : ResponseEntity.notFound().build();
+        var updateMenu = menuService.updateMenu(toDomain(menuUpdateDto, id));
 
+        return new ResponseEntity<>(toDto(updateMenu), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -62,11 +64,10 @@ public class MenuController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity findById(@PathVariable("id") Long id) {
+    public ResponseEntity<MenuDto> findById(@PathVariable("id") Long id) {
 
         var menu = menuService.findById(id);
 
-        return nonNull(menu) ? ResponseEntity.ok(menu) : ResponseEntity.notFound().build();
+        return new ResponseEntity<>(toDto(menu), HttpStatus.OK);
     }
-
 }

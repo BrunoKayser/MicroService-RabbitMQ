@@ -12,4 +12,7 @@ public interface MenuRepositoryPort {
 
     void delete(Menu menu);
 
+    Boolean existsByName(String name);
+
+    void update(Menu menu);
 }

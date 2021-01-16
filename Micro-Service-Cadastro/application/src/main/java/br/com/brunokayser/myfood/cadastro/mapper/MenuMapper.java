@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MenuMapper {
 
-    public static MenuUpdate toEntity(MenuUpdateDto menuUpdateDto, Long id){
-
+    public static MenuUpdate toDomain(MenuUpdateDto menuUpdateDto, Long id){
         return MenuUpdate
             .builder()
             .id(id)
@@ -23,6 +22,12 @@ public class MenuMapper {
             .restaurant(menuUpdateDto.getRestaurant())
             .build();
     }
+
+    public static MenuUpdateDto toDto(MenuUpdate menuUpdate){
+        return new ModelMapper().map(menuUpdate, MenuUpdateDto.class);
+    }
+
+
 
     public static MenuInsertDto toDtoWithoutId(Menu menu){
 

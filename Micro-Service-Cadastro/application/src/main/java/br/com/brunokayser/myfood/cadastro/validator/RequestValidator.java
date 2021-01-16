@@ -4,6 +4,7 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
+import br.com.brunokayser.myfood.cadastro.dto.MenuInsertDto;
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
 import com.br.brunokayser.myfood.cadastro.exception.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ public class RequestValidator {
 
     private static final String REGEX_EMAIL = "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`\\{|\\}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
     private static final String REGEX_PASSWORD = "^(?=.*?[a-zA-Z])(?=(?:.*?\\d))[a-zA-Z0-9\\d]{6,100}";
+    private static final Double MINIMUM_PRICE = 0D;
 
     public void validate(ClientDto clientDto){
 
@@ -29,6 +31,15 @@ public class RequestValidator {
 
         if(of(restaurantDto).isPresent()){
             validateAtributes(restaurantDto.getEmail(), restaurantDto.getPassword());
+        }else{
+            throw new BadRequestException("request.cant.null");
+        }
+    }
+
+    public void validate(MenuInsertDto menuInsertDto){
+
+        if(of(menuInsertDto).isPresent()){
+            validatePrice(menuInsertDto.getPrice());
         }else{
             throw new BadRequestException("request.cant.null");
         }
@@ -48,6 +59,12 @@ public class RequestValidator {
     private void validatePassword(String password){
         if(!password.matches(REGEX_PASSWORD)){
             throw new BadRequestException("invalid.password.format");
+        }
+    }
+
+    private void validatePrice(Double price){
+        if(price < MINIMUM_PRICE){
+            throw new BadRequestException("invalid.price.value");
         }
     }
 }

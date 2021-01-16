@@ -16,4 +16,6 @@ public interface RestaurantRepositoryPort {
 
     void update(Restaurant restaurant);
 
+    Boolean existsById(Long name);
+
 }

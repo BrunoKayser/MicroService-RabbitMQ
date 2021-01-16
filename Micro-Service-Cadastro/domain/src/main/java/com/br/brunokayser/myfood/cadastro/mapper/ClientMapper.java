@@ -6,7 +6,7 @@ import com.br.brunokayser.myfood.cadastro.domain.Client;
 
 public class ClientMapper {
 
-    public static Client toDomainWithoutNullValue(Client update, Client found){
+    public static Client buildClientToUpdate(Client update, Client found){
 
         return Client
             .builder()

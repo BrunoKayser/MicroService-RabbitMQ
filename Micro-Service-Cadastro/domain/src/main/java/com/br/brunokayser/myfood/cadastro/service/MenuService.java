@@ -2,13 +2,13 @@ package com.br.brunokayser.myfood.cadastro.service;
 
 
 import static com.br.brunokayser.myfood.cadastro.domain.enums.Constant.TAG;
+import static com.br.brunokayser.myfood.cadastro.mapper.MenuMapper.buildMenuToUpdate;
 import static com.br.brunokayser.myfood.cadastro.mapper.MenuMapper.toOrderDto;
 
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuInsert;
 import com.br.brunokayser.myfood.cadastro.domain.MenuUpdate;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
-import com.br.brunokayser.myfood.cadastro.mapper.MenuMapper;
 import com.br.brunokayser.myfood.cadastro.port.MenuRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
 import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
@@ -28,11 +28,12 @@ public class MenuService {
 
     public Menu insertMenu(MenuInsert menuInsert) {
 
-        //TODO: Colocar validação para ver se o prato ja existe a esse restaurante
-
         var restaurant = restaurantRepositoryPort.findById(menuInsert.getRestaurant());
 
         serviceValidator.validateIfFound(restaurant.isEmpty());
+
+        serviceValidator.validateIfExistsFoodPlate(menuRepositoryPort
+            .existsByName(menuInsert.getName()), restaurantRepositoryPort.existsById(menuInsert.getRestaurant()));
 
         var menuSaved = menuRepositoryPort.save(buildMenu(menuInsert, restaurant.get()));
 
@@ -42,17 +43,25 @@ public class MenuService {
         return menuSaved;
     }
 
-    public Menu updateMenu(MenuUpdate menu) {
-        //TODO: Colocar validação para ver se o prato ja existe a esse restaurante, também precisa fazer o método de update no repository
-        // e por último fazer o mapper para não obter valores nulos
+    public Menu updateMenu(MenuUpdate menuToUpdate) {
 
-        var newMenu = menuRepositoryPort.findById(menu.getId());
+        var menuFound = menuRepositoryPort.findById(menuToUpdate.getId());
 
-        serviceValidator.validateIfFound(newMenu.isEmpty());
+        var restaurantFound = restaurantRepositoryPort.findById(menuToUpdate.getRestaurant());
 
-        log.info(TAG + " Successful update menu: {}", menu);
-        //menuRepositoryPort.update(menu);
-        return null;
+        restaurantFound.ifPresent(restaurant -> setThisRestaurantInMenuFound(restaurant, menuFound.get()));
+
+        serviceValidator.validateIfFound(menuFound.isEmpty(), restaurantFound.isEmpty(), menuToUpdate);
+
+        serviceValidator.validateIfExistsFoodPlate(menuRepositoryPort
+            .existsByName(menuToUpdate.getName()), restaurantRepositoryPort.existsById(menuFound.get().getRestaurant().getId()));
+
+        var menuUpdated = buildMenuToUpdate(menuToUpdate, menuFound.get());
+
+        menuRepositoryPort.update(menuUpdated);
+
+        log.info(TAG + " Successful update menu: {}", menuUpdated);
+        return menuUpdated;
     }
 
     public void deleteMenu(Long id) {
@@ -62,6 +71,7 @@ public class MenuService {
         serviceValidator.validateIfFound(deleteMenu.isEmpty());
 
         log.info(TAG + " Successful delete for client: {}", deleteMenu);
+
         menuRepositoryPort.delete(deleteMenu.get());
 
     }
@@ -88,4 +98,7 @@ public class MenuService {
             .build();
     }
 
+    private void setThisRestaurantInMenuFound(Restaurant restaurant, Menu menu) {
+        menu.setRestaurant(restaurant);
+    }
 }

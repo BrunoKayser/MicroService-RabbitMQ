@@ -12,6 +12,8 @@ public interface RestaurantRepository extends JpaRepository<RestaurantDto, Long>
 
     Boolean existsByNameOrEmail(String name, String email);
 
+    Boolean existsByName(String name);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE cadastro.tb_restaurant tbr SET tbr.name = :name , tbr.email = :email, tbr.password = :password WHERE tbr.id = :id", nativeQuery = true)
@@ -20,4 +22,5 @@ public interface RestaurantRepository extends JpaRepository<RestaurantDto, Long>
        @Param(value = "name") String name,
        @Param(value = "password") String password,
        @Param(value = "id") Long id);
+
 }

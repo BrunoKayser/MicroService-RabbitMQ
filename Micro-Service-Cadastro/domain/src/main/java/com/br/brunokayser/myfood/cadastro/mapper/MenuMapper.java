@@ -1,10 +1,10 @@
 package com.br.brunokayser.myfood.cadastro.mapper;
 
-import static java.util.Optional.ofNullable;
-
-import com.br.brunokayser.myfood.cadastro.domain.Client;
+import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuOrder;
+import com.br.brunokayser.myfood.cadastro.domain.MenuUpdate;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import java.util.Optional;
 
 public class MenuMapper {
 
@@ -14,6 +14,17 @@ public class MenuMapper {
             .builder()
             .idMenu(idMenu)
             .idRestaurant(idRestaurant)
+            .build();
+    }
+
+    public static Menu buildMenuToUpdate(MenuUpdate menuUpdate, Menu menu){
+
+        return Menu
+            .builder()
+            .Id(menuUpdate.getId())
+            .name(Optional.ofNullable(menuUpdate.getName()).orElse(menu.getName()))
+            .price(Optional.ofNullable(menuUpdate.getPrice()).orElse(menu.getPrice()))
+            .restaurant(menu.getRestaurant())
             .build();
     }
 }

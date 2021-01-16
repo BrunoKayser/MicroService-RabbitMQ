@@ -27,10 +27,14 @@ public class RestaurantRepositoryPortImpl implements RestaurantRepositoryPort {
     @Override
     public Optional<Restaurant> findById(Long id) {
 
-        var restaurant = restaurantRepository.findById(id);
+        if(id == null){
+            id = 0L;
+        }
+
+        var restaurant =restaurantRepository.findById(id);
 
         if (restaurant.isEmpty()) {
-            return ofNullable(toDomain(null));
+            return Optional.empty();
         }
 
         return ofNullable(toDomain(restaurant.get()));
@@ -49,5 +53,10 @@ public class RestaurantRepositoryPortImpl implements RestaurantRepositoryPort {
     @Override
     public void update(Restaurant restaurant) {
         restaurantRepository.update(restaurant.getEmail(), restaurant.getName(), restaurant.getPassword(), restaurant.getId());
+    }
+
+    @Override
+    public Boolean existsById(Long id) {
+        return restaurantRepository.existsById(id);
     }
 }

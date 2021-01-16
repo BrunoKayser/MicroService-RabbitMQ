@@ -1,5 +1,7 @@
 package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
+import static java.util.Optional.ofNullable;
+
 import br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence.MenuRepository;
 import br.com.brunokayser.myfood.cadastro.mapper.MenuMapper;
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
@@ -21,31 +23,36 @@ public class MenuRepositoryPortImpl implements MenuRepositoryPort {
 
     @Override
     public Menu save(Menu menu) {
-        try {
-            return MenuMapper.toDomain(menuRepository.save(MenuMapper.toDto(menu)));
-        } catch (Exception e) {
-            log.error(TAG + "Error in repository trying to save menu");
-            throw new InternalErrorException("error.save.menu.repository");
-        }
+        return MenuMapper.toDomain(menuRepository.save(MenuMapper.toDto(menu)));
     }
 
     @Override
     public Optional<Menu> findById(Long id) {
-        try {
-            return Optional.of(MenuMapper.toDomain(menuRepository.findById(id).get()));
-        } catch (Exception e) {
-            log.error(TAG + "Error in repository trying find menu");
-            throw new InternalErrorException("error.find.menu.repository");
+
+        var menuDto = menuRepository.findById(id);
+
+        if (menuDto.isEmpty()) {
+            return Optional.empty();
         }
+
+        return ofNullable(MenuMapper.toDomain(menuDto.get()));
+
     }
 
     @Override
     public void delete(Menu menu) {
-        try {
         menuRepository.delete(MenuMapper.toDto(menu));
-        } catch (Exception e) {
-            log.error(TAG + "Error in repository trying delete menu");
-            throw new InternalErrorException("error.delete.menu.repository");
-        }
+    }
+
+    public Boolean existsByName(String name) {
+        return menuRepository.existsByName(name);
+    }
+
+    public void update(Menu menu) {
+        menuRepository.update(
+            menu.getId(),
+            menu.getName(),
+            menu.getPrice(),
+            menu.getRestaurant().getId());
     }
 }
