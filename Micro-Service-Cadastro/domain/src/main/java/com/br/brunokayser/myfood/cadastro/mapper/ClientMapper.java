@@ -16,5 +16,4 @@ public class ClientMapper {
             .password(ofNullable(update.getPassword()).orElse(found.getPassword()))
             .build();
     }
-
 }

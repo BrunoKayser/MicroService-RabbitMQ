@@ -4,11 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
 
-  <modules>
-    <module>application</module>
-    <module>domain</module>
-  </modules>
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -25,8 +20,13 @@
   <properties>
     <java.version>11</java.version>
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-    <model.mapper.version>2.3.8</model.mapper.version>
+    <model.com.br.brunokayser.myfood.cadastro.mapper.version>2.3.8</model.com.br.brunokayser.myfood.cadastro.mapper.version>
   </properties>
+
+  <modules>
+    <module>application</module>
+    <module>domain</module>
+  </modules>
 
   <dependencies>
 
@@ -38,19 +38,55 @@
     </dependency>
 
     <!-- Habilitar os logs -->
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.30</version>
-        </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.30</version>
+    </dependency>
 
     <!-- Model Mapper -->
     <dependency>
       <groupId>org.modelmapper</groupId>
       <artifactId>modelmapper</artifactId>
-      <version>${model.mapper.version}</version>
+      <version>${model.com.br.brunokayser.myfood.cadastro.mapper.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>2.3.4.RELEASE</version>
     </dependency>
 
+    <!--Commons Lang3 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.9</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <version>2.3.4.RELEASE</version>
+
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>au.com.dius</groupId>
+      <artifactId>pact-jvm-provider-junit5</artifactId>
+      <version>4.0.3</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -62,6 +98,19 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!-- Test with Mockito, jUnit,... -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -71,7 +120,241 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>add-test-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/test/functional/java</source>
+                <source>src/test/integration/java</source>
+                <source>src/test/unit/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>au.com.dius</groupId>
+          <artifactId>pact-jvm-provider-maven</artifactId>
+          <version>4.0.3</version>
+          <configuration>
+            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>
+            <trimSnapshot>true</trimSnapshot>
+            <serviceProviders>
+              <serviceProvider>
+                <name>Cadastro</name>
+                <insecure>true</insecure>
+                <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>
+              </serviceProvider>
+            </serviceProviders>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>unit</id>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>src/test/unit/resources</directory>
+          </testResource>
+        </testResources>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>add-test-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-test-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>src/test/unit/java</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <!--  <build>-->
+  <!--    <plugins>-->
+  <!--      <plugin>-->
+  <!--        <groupId>org.codehaus.mojo</groupId>-->
+  <!--        <artifactId>build-helper-maven-plugin</artifactId>-->
+  <!--        <version>3.0.0</version>-->
+  <!--        <executions>-->
+  <!--          <execution>-->
+  <!--            <id>add-test-source</id>-->
+  <!--            <phase>generate-sources</phase>-->
+  <!--            <goals>-->
+  <!--              <goal>add-test-source</goal>-->
+  <!--            </goals>-->
+  <!--            <configuration>-->
+  <!--              <sources>-->
+  <!--                <source>src/test/functional/java</source>-->
+  <!--                <source>src/test/integration/java</source>-->
+  <!--                <source>src/test/unit/java</source>-->
+  <!--              </sources>-->
+  <!--            </configuration>-->
+  <!--          </execution>-->
+  <!--        </executions>-->
+  <!--      </plugin>-->
+  <!--    </plugins>-->
+  <!--    <pluginManagement>-->
+  <!--      <plugins>-->
+  <!--        <plugin>-->
+  <!--          <groupId>au.com.dius</groupId>-->
+  <!--          <artifactId>pact-jvm-provider-maven</artifactId>-->
+  <!--          <version>4.0.3</version>-->
+  <!--          <configuration>-->
+  <!--            <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
+  <!--            <trimSnapshot>true</trimSnapshot>-->
+  <!--            <serviceProviders>-->
+  <!--              <serviceProvider>-->
+  <!--                <name>sboot-spag-pixx-atom-consulta-conta-fintech</name>-->
+  <!--                <insecure>true</insecure>-->
+  <!--                <pactBrokerUrl>http://localhost:9292/</pactBrokerUrl>-->
+  <!--              </serviceProvider>-->
+  <!--            </serviceProviders>-->
+  <!--          </configuration>-->
+  <!--        </plugin>-->
+  <!--      </plugins>-->
+  <!--    </pluginManagement>-->
+  <!--  </build>-->
+
+  <!--  -->
+  <!--    <profile>-->
+  <!--      <id>integration</id>-->
+  <!--      <build>-->
+  <!--        <testResources>-->
+  <!--          <testResource>-->
+  <!--            <directory>src/test/integration/resources</directory>-->
+  <!--          </testResource>-->
+  <!--        </testResources>-->
+  <!--        <plugins>-->
+  <!--          <plugin>-->
+  <!--            <groupId>org.codehaus.mojo</groupId>-->
+  <!--            <artifactId>build-helper-maven-plugin</artifactId>-->
+  <!--            <version>3.0.0</version>-->
+  <!--            <executions>-->
+  <!--              <execution>-->
+  <!--                <id>add-test-source</id>-->
+  <!--                <phase>generate-sources</phase>-->
+  <!--                <goals>-->
+  <!--                  <goal>add-test-source</goal>-->
+  <!--                </goals>-->
+  <!--                <configuration>-->
+  <!--                  <sources>-->
+  <!--                    <source>src/test/integration/java</source>-->
+  <!--                  </sources>-->
+  <!--                </configuration>-->
+  <!--              </execution>-->
+  <!--            </executions>-->
+  <!--          </plugin>-->
+  <!--        </plugins>-->
+  <!--      </build>-->
+  <!--    </profile>-->
+  <!--    <profile>-->
+  <!--      <id>functional</id>-->
+  <!--      <build>-->
+  <!--        <testResources>-->
+  <!--          <testResource>-->
+  <!--            <directory>src/test/functional/resources</directory>-->
+  <!--          </testResource>-->
+  <!--        </testResources>-->
+  <!--        <plugins>-->
+  <!--          <plugin>-->
+  <!--            <groupId>org.codehaus.mojo</groupId>-->
+  <!--            <artifactId>build-helper-maven-plugin</artifactId>-->
+  <!--            <version>3.0.0</version>-->
+  <!--            <executions>-->
+  <!--              <execution>-->
+  <!--                <id>add-test-source</id>-->
+  <!--                <phase>generate-sources</phase>-->
+  <!--                <goals>-->
+  <!--                  <goal>add-test-source</goal>-->
+  <!--                </goals>-->
+  <!--                <configuration>-->
+  <!--                  <sources>-->
+  <!--                    <source>src/test/functional/java</source>-->
+  <!--                  </sources>-->
+  <!--                </configuration>-->
+  <!--              </execution>-->
+  <!--            </executions>-->
+  <!--          </plugin>-->
+  <!--        </plugins>-->
+  <!--      </build>-->
+  <!--    </profile>-->
+  <!--    <profile>-->
+  <!--      <id>architecture</id>-->
+  <!--      <dependencies>-->
+  <!--        <dependency>-->
+  <!--          <groupId>votorantim.arqt.base</groupId>-->
+  <!--          <artifactId>pom-arqt-base-microservices-archunit</artifactId>-->
+  <!--          <version>${bv.archunit.version}</version>-->
+  <!--        </dependency>-->
+  <!--      </dependencies>-->
+  <!--      <build>-->
+  <!--        <plugins>-->
+  <!--          <plugin>-->
+  <!--            <groupId>org.apache.maven.plugins</groupId>-->
+  <!--            <artifactId>maven-surefire-plugin</artifactId>-->
+  <!--            <version>2.22.0</version>-->
+  <!--            <configuration>-->
+  <!--              <includes>-->
+  <!--                <include>br.com.votorantim.architecture.common.**</include>-->
+  <!--                <include>br.com.votorantim.architecture.${architecture.read}.**</include>-->
+  <!--              </includes>-->
+  <!--            </configuration>-->
+  <!--          </plugin>-->
+  <!--          <plugin>-->
+  <!--            <groupId>org.apache.maven.plugins</groupId>-->
+  <!--            <artifactId>maven-dependency-plugin</artifactId>-->
+  <!--            <executions>-->
+  <!--              <execution>-->
+  <!--                <id>unpack</id>-->
+  <!--                <phase>process-test-classes</phase>-->
+  <!--                <goals>-->
+  <!--                  <goal>unpack</goal>-->
+  <!--                </goals>-->
+  <!--                <configuration>-->
+  <!--                  <artifactItems>-->
+  <!--                    <artifactItem>-->
+  <!--                      <groupId>votorantim.arqt.base</groupId>-->
+  <!--                      <artifactId>pom-arqt-base-microservices-archunit</artifactId>-->
+  <!--                      <version>${bv.archunit.version}</version>-->
+  <!--                      <overWrite>true</overWrite>-->
+  <!--                      <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>-->
+  <!--                    </artifactItem>-->
+  <!--                  </artifactItems>-->
+  <!--                </configuration>-->
+  <!--              </execution>-->
+  <!--            </executions>-->
+  <!--          </plugin>-->
+  <!--        </plugins>-->
+  <!--      </build>-->
+  <!--    </profile>-->
+  <!--  </profiles>-->
 
 </project>
