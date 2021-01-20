@@ -3,7 +3,6 @@ package com.br.brunokayser.myfood.cadastro.mapper;
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.domain.MenuOrder;
 import com.br.brunokayser.myfood.cadastro.domain.MenuUpdate;
-import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
 import java.util.Optional;
 
 public class MenuMapper {

@@ -40,6 +40,11 @@ public class MenuFixture {
         return this;
     }
 
+    public MenuFixture withIdRestaurant(Long param){
+        menu.getRestaurant().setId(param);
+        return this;
+    }
+
 
     public Menu build() {
         return menu;

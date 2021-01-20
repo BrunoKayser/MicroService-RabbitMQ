@@ -13,7 +13,7 @@ public class RestaurantFixture {
         return builder;
     }
 
-    public static void withRandomData(RestaurantFixture builder) {
+    private static void withRandomData(RestaurantFixture builder) {
         builder.restaurant = new Restaurant();
         Restaurant restaurant = builder.restaurant;
 
@@ -29,15 +29,11 @@ public class RestaurantFixture {
         return this;
     }
 
-    public RestaurantFixture withName(String param) {
-        restaurant.setName(param);
+    public RestaurantFixture withoutId() {
+        restaurant.setId(null);
         return this;
     }
 
-    public RestaurantFixture withPassword(String param) {
-        restaurant.setPassword(param);
-        return this;
-    }
 
     public Restaurant build() {
         return restaurant;
