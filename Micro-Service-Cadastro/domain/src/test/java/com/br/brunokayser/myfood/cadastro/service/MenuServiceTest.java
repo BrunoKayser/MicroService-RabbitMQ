@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.br.brunokayser.myfood.cadastro.domain.Menu;
 import com.br.brunokayser.myfood.cadastro.fixture.MenuFixture;
 import com.br.brunokayser.myfood.cadastro.fixture.MenuInsertFixture;
+import com.br.brunokayser.myfood.cadastro.fixture.MenuUpdateFixture;
 import com.br.brunokayser.myfood.cadastro.fixture.RestaurantFixture;
 import com.br.brunokayser.myfood.cadastro.port.MenuRepositoryPort;
 import com.br.brunokayser.myfood.cadastro.port.MenuSendMessage;
@@ -99,33 +100,93 @@ class MenuServiceTest {
     }
 
     @Test
-    void updateMenu() {
+    void shouldVerifyTheMenuUpdatedOk() {
 
         //Arrange
+        var menuToUpdate = MenuUpdateFixture.getWithRandomData().build();
+
+        var menuFound = Optional.of(MenuFixture
+            .getWithRandomData()
+            .withId(menuToUpdate.getId())
+            .withIdRestaurant(menuToUpdate.getRestaurant())
+            .build());
+
+        var restaurant = RestaurantFixture.getWithRandomData().withId(menuToUpdate.getRestaurant()).build();
+
+        when(menuRepositoryPort.findById(menuToUpdate.getId()))
+            .thenReturn(menuFound);
+
+        when(restaurantRepositoryPort.findById(menuToUpdate.getRestaurant()))
+            .thenReturn(Optional.of(restaurant));
+
+        when(menuRepositoryPort.existsByName(menuToUpdate.getName()))
+            .thenReturn(Boolean.FALSE);
+
+        when(restaurantRepositoryPort.existsById(menuFound.get().getRestaurant().getId()))
+            .thenReturn(Boolean.FALSE);
 
         //Action
+        menuService.updateMenu(menuToUpdate);
 
         //Assert
+        var menuUpdatedCaptor = ArgumentCaptor.forClass(Menu.class);
 
+        verify(menuRepositoryPort, times(1)).findById(menuToUpdate.getId());
+        verify(restaurantRepositoryPort, times(1)).findById(menuToUpdate.getRestaurant());
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE, Boolean.FALSE, menuToUpdate);
+        verify(menuRepositoryPort, times(1)).existsByName(menuToUpdate.getName());
+        verify(restaurantRepositoryPort, times(1)).existsById(menuFound.get().getRestaurant().getId());
+        verify(serviceValidator, times(1)).validateIfExistsFoodPlate(Boolean.FALSE, Boolean.FALSE);
+        verify(menuRepositoryPort, times(1)).update(menuUpdatedCaptor.capture());
+
+        assertEquals(menuToUpdate.getId(), menuUpdatedCaptor.getValue().getId());
+        assertEquals(menuToUpdate.getName(), menuUpdatedCaptor.getValue().getName());
+        assertEquals(menuToUpdate.getPrice(), menuUpdatedCaptor.getValue().getPrice());
+        assertEquals(restaurant, menuUpdatedCaptor.getValue().getRestaurant());
     }
 
     @Test
-    void deleteMenu() {
+    void shouldDeleteMenuOk() {
 
         //Arrange
+        var menu = MenuFixture
+            .getWithRandomData()
+            .withId(ID_MOCK)
+            .build();
+
+        when(menuRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(menu));
 
         //Action
+        menuService.deleteMenu(ID_MOCK);
 
         //Assert
+        verify(menuRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE);
     }
 
     @Test
     void findById() {
 
         //Arrange
+        var menu = MenuFixture
+            .getWithRandomData()
+            .withId(ID_MOCK)
+            .build();
+
+        when(menuRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(menu));
 
         //Action
+        var response = menuService.findById(ID_MOCK);
 
         //Assert
+        verify(menuRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE);
+
+        assertEquals(ID_MOCK, response.getId());
+        assertEquals(menu.getRestaurant(), response.getRestaurant());
+        assertEquals(menu.getPrice(), response.getPrice());
+        assertEquals(menu.getName(), response.getName());
     }
 }
