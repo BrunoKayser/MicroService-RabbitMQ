@@ -98,10 +98,18 @@ class RestaurantServiceTest {
 
         //TODO ADICIONAR O SUREFIRE PARA RODAR MAIS DE UM TESTE AO MESMO TEMPO
         //Arrange
+        var restaurant = RestaurantFixture.getWithRandomData().withId(ID_MOCK).build();
+
+        when(restaurantRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(restaurant));
 
         //Action
+        restaurantService.deleteRestaurant(ID_MOCK);
 
         //Assert
+        verify(restaurantRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE);
+        verify(restaurantRepositoryPort, times(1)).delete(restaurant);
 
     }
 
@@ -109,10 +117,21 @@ class RestaurantServiceTest {
     void findById() {
 
         //Arrange
+        var restaurant = RestaurantFixture.getWithRandomData().withId(ID_MOCK).build();
+
+        when(restaurantRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(restaurant));
 
         //Action
+        var response = restaurantService.findById(ID_MOCK);
 
         //Assert
+        verify(restaurantRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE);
 
+        assertEquals(ID_MOCK, response.getId());
+        assertEquals(restaurant.getEmail(), response.getEmail());
+        assertEquals(restaurant.getName(), response.getName());
+        assertEquals(restaurant.getPassword(), response.getPassword());
     }
 }

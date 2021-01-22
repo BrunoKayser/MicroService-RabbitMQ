@@ -41,7 +41,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<CustomErrorDto> customHandlerNotFound(NotFoundException ex, WebRequest request){
         var error = getCustomError(ex.getMessage(), HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     private CustomErrorDto getCustomError(String messageError, int statusCode, Object... objects){

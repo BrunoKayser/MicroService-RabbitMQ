@@ -1,7 +1,6 @@
 package br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence;
 
 import br.com.brunokayser.myfood.cadastro.dto.RestaurantDto;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
