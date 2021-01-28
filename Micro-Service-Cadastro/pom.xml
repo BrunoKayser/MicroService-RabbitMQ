@@ -11,9 +11,9 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>com.br.myfood</groupId>
+  <groupId>com.br.brunokayser.myfood.cadastro</groupId>
   <artifactId>Cadastro</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>Cadastro</name>
   <description>Micro serviço de cadastros</description>
 
@@ -63,12 +63,11 @@
       <version>3.9</version>
     </dependency>
 
+    <!-- Test with Mockito, jUnit,... -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <version>2.3.4.RELEASE</version>
-
       <exclusions>
         <exclusion>
           <groupId>org.junit.vintage</groupId>
@@ -77,16 +76,12 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>au.com.dius</groupId>
-      <artifactId>pact-jvm-provider-junit5</artifactId>
+      <artifactId>pact-jvm-consumer-junit5</artifactId>
       <version>4.0.3</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <dependencyManagement>
@@ -97,19 +92,6 @@
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <!-- Test with Mockito, jUnit,... -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -195,8 +177,38 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>integration</id>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>src/test/integration/resources</directory>
+          </testResource>
+        </testResources>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>add-test-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-test-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>src/test/integration/java</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
-
   <!--  <build>-->
   <!--    <plugins>-->
   <!--      <plugin>-->
