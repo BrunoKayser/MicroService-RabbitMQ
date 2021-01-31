@@ -1,4 +1,4 @@
-package fixture;
+package br.com.brunokayser.myfood.cadastro.fixture;
 
 import com.br.brunokayser.myfood.cadastro.domain.Client;
 import org.apache.commons.lang3.RandomStringUtils;

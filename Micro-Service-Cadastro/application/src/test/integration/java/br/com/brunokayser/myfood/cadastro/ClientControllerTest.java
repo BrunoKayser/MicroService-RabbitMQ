@@ -6,6 +6,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,8 +24,8 @@ import com.br.brunokayser.myfood.cadastro.port.ClientSendMessage;
 import com.br.brunokayser.myfood.cadastro.port.LoginSendMessage;
 import com.br.brunokayser.myfood.cadastro.validator.ServiceValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fixture.ClientDtoFixture;
-import fixture.ClientFixture;
+import br.com.brunokayser.myfood.cadastro.fixture.ClientDtoFixture;
+import br.com.brunokayser.myfood.cadastro.fixture.ClientFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -76,11 +78,11 @@ public class ClientControllerTest extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
             .andDo(print())
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(clientSaved.getId()))
-        .andExpect(jsonPath("$.name").value(clientSaved.getName()))
-        .andExpect(jsonPath("$.email").value(clientSaved.getEmail()))
-        .andExpect(jsonPath("$.password").value(clientSaved.getPassword()));
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(clientSaved.getId()))
+            .andExpect(jsonPath("$.name").value(clientSaved.getName()))
+            .andExpect(jsonPath("$.email").value(clientSaved.getEmail()))
+            .andExpect(jsonPath("$.password").value(clientSaved.getPassword()));
 
         //Assert
         verify(clientRepositoryPort, times(1)).existsByEmail(request.getEmail());
@@ -209,7 +211,6 @@ public class ClientControllerTest extends BaseIntegrationTest {
         when(clientRepositoryPort.existsByEmail(dataToUpdate.getEmail()))
             .thenReturn(Boolean.FALSE);
 
-
         //Action
         mockMvc.perform(
             put("/client/update/{ID_MOCK}", ID_MOCK)
@@ -327,8 +328,98 @@ public class ClientControllerTest extends BaseIntegrationTest {
 
         //Assert
         verify(clientRepositoryPort, times(1)).findById(ID_MOCK);
-        verify(clientRepositoryPort,times(1)).existsByEmail(request.getEmail());
+        verify(clientRepositoryPort, times(1)).existsByEmail(request.getEmail());
         verify(clientRepositoryPort, never()).update(any(Client.class));
+    }
+
+    @Test
+    public void shouldDeleteClientOk() throws Exception {
+
+        //Arrange
+        var clientToDelete = ClientFixture
+            .getWithRandomData()
+            .withId(ID_MOCK)
+            .build();
+
+        when(clientRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(clientToDelete));
+
+        //Action
+        mockMvc.perform(
+            delete("/client/delete/{ID_MOCK}", ID_MOCK)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
+
+        //Assert
+        verify(clientRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(clientRepositoryPort, times(1)).delete(clientToDelete);
+    }
+
+    @Test
+    public void shouldNotDeleteClientWhenIdDoenstExists() throws Exception {
+
+        //Arrange
+        when(clientRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.empty());
+
+        //Action
+        mockMvc.perform(
+            delete("/client/delete/{ID_MOCK}", ID_MOCK)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.messageError").value("CADASTRO - Id not found"));
+
+        //Assert
+        verify(clientRepositoryPort, times(1)).findById(ID_MOCK);
+        verify(clientRepositoryPort, never()).delete(any());
+    }
+
+    @Test
+    public void shouldFindClientOk() throws Exception {
+
+        //Arrange
+        var clientFound = ClientFixture
+            .getWithRandomData()
+            .withId(ID_MOCK)
+            .build();
+
+        when(clientRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.of(clientFound));
+
+        //Action
+        mockMvc.perform(
+            get("/client/find/{ID_MOCK}", ID_MOCK)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isFound())
+            .andExpect(jsonPath("$.id").value(ID_MOCK))
+            .andExpect(jsonPath("$.name").value(clientFound.getName()))
+            .andExpect(jsonPath("$.email").value(clientFound.getEmail()))
+            .andExpect(jsonPath("$.password").value(clientFound.getPassword()));
+
+        //Assert
+        verify(clientRepositoryPort, times(1)).findById(ID_MOCK);
+    }
+
+    @Test
+    public void shouldNotFindClientWhenIdDoesNotExists() throws Exception {
+
+        //Arrange
+        when(clientRepositoryPort.findById(ID_MOCK))
+            .thenReturn(Optional.empty());
+
+        //Action
+        mockMvc.perform(
+            get("/client/find/{ID_MOCK}", ID_MOCK)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.messageError").value("CADASTRO - Id not found"));
+
+        //Assert
+        verify(clientRepositoryPort, times(1)).findById(ID_MOCK);
     }
 
 }

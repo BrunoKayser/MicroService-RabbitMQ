@@ -1,7 +1,6 @@
-package fixture;
+package br.com.brunokayser.myfood.cadastro.fixture;
 
 import br.com.brunokayser.myfood.cadastro.dto.ClientDto;
-import com.br.brunokayser.myfood.cadastro.domain.Client;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class ClientDtoFixture {
