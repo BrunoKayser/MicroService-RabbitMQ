@@ -133,7 +133,7 @@ class MenuServiceTest {
 
         verify(menuRepositoryPort, times(1)).findById(menuToUpdate.getId());
         verify(restaurantRepositoryPort, times(1)).findById(menuToUpdate.getRestaurant());
-        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE, Boolean.FALSE, menuToUpdate);
+        verify(serviceValidator, times(1)).validateIfFound(Boolean.FALSE, Boolean.FALSE);
         verify(menuRepositoryPort, times(1)).existsByName(menuToUpdate.getName());
         verify(restaurantRepositoryPort, times(1)).existsById(menuFound.get().getRestaurant().getId());
         verify(serviceValidator, times(1)).validateIfExistsFoodPlate(Boolean.FALSE, Boolean.FALSE);

@@ -19,20 +19,4 @@
     <java.version>11</java.version>
   </properties>
 
-  <!-- Test with Mockito, jUnit,... -->
-<!--  <dependencies>-->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-test</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--      <version>2.3.4.RELEASE</version>-->
-
-<!--      <exclusions>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.junit.vintage</groupId>-->
-<!--          <artifactId>junit-vintage-engine</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
-<!--    </dependency>-->
-<!--  </dependencies>-->
 </project>

@@ -1,5 +1,6 @@
 package br.com.brunokayser.myfood.cadastro.infraestructure.database;
 
+import static br.com.brunokayser.myfood.cadastro.mapper.MenuMapper.toDto;
 import static java.util.Optional.ofNullable;
 
 import br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence.MenuRepository;
@@ -23,36 +24,63 @@ public class MenuRepositoryPortImpl implements MenuRepositoryPort {
 
     @Override
     public Menu save(Menu menu) {
-        return MenuMapper.toDomain(menuRepository.save(MenuMapper.toDto(menu)));
+        try {
+            return MenuMapper.toDomain(menuRepository.save(toDto(menu)));
+
+        } catch (Exception e) {
+            log.error("Error in repository trying to save, menu: {}, stackTrace{}", menu, e.fillInStackTrace());
+            throw new InternalErrorException("error.menu.repository");
+        }
     }
 
     @Override
     public Optional<Menu> findById(Long id) {
+        try {
+            var menuDto = menuRepository.findById(id);
 
-        var menuDto = menuRepository.findById(id);
+            if (menuDto.isEmpty()) {
+                return Optional.empty();
+            }
 
-        if (menuDto.isEmpty()) {
-            return Optional.empty();
+            return ofNullable(MenuMapper.toDomain(menuDto.get()));
+        } catch (Exception e) {
+            log.error("Error in repository trying to findById, ID {}, stack-trace", id, e.fillInStackTrace());
+            throw new InternalErrorException("error.menu.repository");
         }
-
-        return ofNullable(MenuMapper.toDomain(menuDto.get()));
-
     }
 
     @Override
     public void delete(Menu menu) {
-        menuRepository.delete(MenuMapper.toDto(menu));
+        try {
+            menuRepository.delete(toDto(menu));
+
+        } catch (Exception e) {
+            log.error("Error in repository trying to delete, menu {}, stack-trace: {}", menu, e.fillInStackTrace());
+            throw new InternalErrorException("error.menu.repository");
+        }
     }
 
     public Boolean existsByName(String name) {
-        return menuRepository.existsByName(name);
+        try {
+            return menuRepository.existsByName(name);
+
+        } catch (Exception e) {
+            log.error("Error in repository trying to verify if exists By name, Name {}, stack-trace", name, e.fillInStackTrace());
+            throw new InternalErrorException("error.menu.repository");
+        }
     }
 
     public void update(Menu menu) {
-        menuRepository.update(
-            menu.getId(),
-            menu.getName(),
-            menu.getPrice(),
-            menu.getRestaurant().getId());
+        try {
+            menuRepository.update(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getRestaurant().getId());
+
+        } catch (Exception e) {
+            log.error("Error in repository trying to update, menu {}, stack-trace", menu, e.fillInStackTrace());
+            throw new InternalErrorException("error.menu.repository");
+        }
     }
 }

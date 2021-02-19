@@ -49,12 +49,14 @@ public class MenuService {
 
         var restaurantFound = restaurantRepositoryPort.findById(menuToUpdate.getRestaurant());
 
-        restaurantFound.ifPresent(restaurant -> setThisRestaurantInMenuFound(restaurant, menuFound.get()));
+        if(menuFound.isPresent()){
+            restaurantFound.ifPresent(restaurant -> setThisRestaurantInMenuFound(restaurant, menuFound.get()));
+        }
 
-        serviceValidator.validateIfFound(menuFound.isEmpty(), restaurantFound.isEmpty(), menuToUpdate);
+        serviceValidator.validateIfFound(menuFound.isEmpty(), restaurantFound.isEmpty());
 
         serviceValidator.validateIfExistsFoodPlate(menuRepositoryPort
-            .existsByName(menuToUpdate.getName()), restaurantRepositoryPort.existsById(menuFound.get().getRestaurant().getId()));
+            .existsByName(menuToUpdate.getName()), restaurantRepositoryPort.existsById(restaurantFound.get().getId()));
 
         var menuUpdated = buildMenuToUpdate(menuToUpdate, menuFound.get());
 
