@@ -21,13 +21,13 @@ public class ServiceValidator {
         }
     }
 
-    public void validateIfFound(boolean conditionMenu, boolean conditionRestaurant, MenuUpdate menuUpdate) {
+    public void validateIfFound(boolean conditionMenu, boolean conditionRestaurant) {
         if (conditionMenu) {
             log.error(TAG + "Menu not found");
             throw new NotFoundException("menu.not.found");
         }
 
-        if (conditionRestaurant && menuUpdate.getRestaurant() != null) {
+        if (conditionRestaurant) {
             log.error(TAG + " Restaurant not found");
             throw new NotFoundException("restaurant.not.found");
         }

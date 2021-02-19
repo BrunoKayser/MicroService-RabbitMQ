@@ -6,6 +6,7 @@ import static java.util.Optional.ofNullable;
 
 import br.com.brunokayser.myfood.cadastro.infraestructure.database.persistence.RestaurantRepository;
 import com.br.brunokayser.myfood.cadastro.domain.Restaurant;
+import com.br.brunokayser.myfood.cadastro.exception.InternalErrorException;
 import com.br.brunokayser.myfood.cadastro.port.RestaurantRepositoryPort;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,42 +22,71 @@ public class RestaurantRepositoryPortImpl implements RestaurantRepositoryPort {
 
     @Override
     public Restaurant save(Restaurant restaurant) {
-        return toDomain(restaurantRepository.save(toDto(restaurant)));
+        try {
+            return toDomain(restaurantRepository.save(toDto(restaurant)));
+        } catch (Exception e) {
+            log.error("Error in repository trying to save, restaurant: {}, stackTrace{}", restaurant, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
+        }
     }
 
     @Override
     public Optional<Restaurant> findById(Long id) {
+        try {
+            if (id == null) {
+                id = 0L;
+            }
 
-        if(id == null){
-            id = 0L;
+            var restaurant = restaurantRepository.findById(id);
+
+            if (restaurant.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return ofNullable(toDomain(restaurant.get()));
+        } catch (Exception e) {
+            log.error("Error in repository trying to find restaurant, id: {}, stackTrace{}", id, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
         }
-
-        var restaurant =restaurantRepository.findById(id);
-
-        if (restaurant.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return ofNullable(toDomain(restaurant.get()));
     }
 
     @Override
     public void delete(Restaurant restaurant) {
-        restaurantRepository.delete(toDto(restaurant));
+        try {
+            restaurantRepository.delete(toDto(restaurant));
+        } catch (Exception e) {
+            log.error("Error in repository trying to delete restaurant, restaurant: {}, stackTrace{}", restaurant, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
+        }
     }
 
     @Override
     public Boolean existsByEmailOrName(String email, String name) {
-        return restaurantRepository.existsByNameOrEmail(name, email);
+        try {
+            return restaurantRepository.existsByNameOrEmail(name, email);
+        } catch (Exception e) {
+            log.error("Error in Restaurant repository trying to verify if exists by name {} and email {}, stackTrace{}",email, name, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
+        }
     }
 
     @Override
     public void update(Restaurant restaurant) {
-        restaurantRepository.update(restaurant.getEmail(), restaurant.getName(), restaurant.getPassword(), restaurant.getId());
+        try {
+            restaurantRepository.update(restaurant.getEmail(), restaurant.getName(), restaurant.getPassword(), restaurant.getId());
+        } catch (Exception e) {
+            log.error("Error in Restaurant repository trying to update restaurant: {}, stackTrace{}", restaurant, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
+        }
     }
 
     @Override
     public Boolean existsById(Long id) {
-        return restaurantRepository.existsById(id);
+        try {
+            return restaurantRepository.existsById(id);
+        } catch (Exception e) {
+            log.error("Error in Restaurant repository trying to verify if exist by id: {}, stackTrace{}", id, e.fillInStackTrace());
+            throw new InternalErrorException("error.restaurant.repository");
+        }
     }
 }

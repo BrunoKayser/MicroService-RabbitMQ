@@ -59,6 +59,8 @@ public class ClientController {
     public @ResponseBody
     ResponseEntity<Void> deleteClient(@PathVariable("id") Long id) {
 
+
+
         clientService.deleteClient(id);
 
        return new ResponseEntity<>(HttpStatus.OK);
